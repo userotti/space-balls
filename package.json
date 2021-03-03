@@ -1,0 +1,22 @@
+{
+  "name": "space-balls",
+  "version": "1.0.0",
+  "description": "\"scorched earth in a solar system\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/userotti/space-balls.git"
+  },
+  "author": "Christian Frauenstein",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/userotti/space-balls/issues"
+  },
+  "homepage": "https://github.com/userotti/space-balls#readme",
+  "dependencies": {
+    "index-ecs": "^1.1.0"
+  }
+}
