@@ -5,7 +5,7 @@
   <body>
     <canvas id="canvas" width="640" height="480" style="background-color: black">
     </canvas>
-
+    <script src="/socket.io.js"></script> 
     <script>
       const canvasWidth = 640;
       const canvasHeight = 480;
@@ -16,8 +16,8 @@
       ctx.fillStyle = 'green';
       ctx.fillRect(canvasWidth/2, canvasHeight/2, 10, 10);
 
-
-
+      var socket = io();
+      
     </script>
   </body>
 </html> 

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/userotti/space-balls#readme",
   "dependencies": {
-    "index-ecs": "^1.1.0"
+    "index-ecs": "^1.1.0",
+    "socket.io": "^3.1.2"
   }
 }
