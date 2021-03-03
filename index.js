@@ -1,25 +1,10 @@
 const http = require("http");
-var url = require('url');  
 const createSocketIo = require('socket.io');
-
-const World = require('index-ecs').World;
 const kickoff = require("./loop");
 const httpRequestHandler = require("./httpRequestHandler");
+const game = require('./game.js');
 
-gameInit = ()=>{
-  
-}
 
-//Regiter my main game callback
-gameLoopCallback = (delta)=>{
-  console.log("do game stuff, delta: ", delta);
-}
-
-//Create the loop function by calling kickoff 
-const loop = kickoff(gameLoopCallback);
-
-//Kick off the whole thing
-loop();
 
 const host = 'localhost';
 const port = 8000;
@@ -35,3 +20,13 @@ server.listen(port, host, () => {
 io.on('connection', (socket) => {
   console.log('a user connected');
 });
+
+
+//Do the setup with World stuff
+game.gameInit(io);
+
+//Create the loop function by calling kickoff 
+const loop = kickoff(game.gameLoopCallback);
+
+//Kick off the whole thing
+loop();

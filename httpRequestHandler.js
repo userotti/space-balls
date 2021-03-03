@@ -2,6 +2,7 @@ var fs = require('fs');
 
 //Main request handler
 module.exports = function (req, res) {
+  console.log("req.url: ", req.url);
   if (req.url === '/socket.io.js'){
       fs.readFile('./node_modules/socket.io/client-dist/socket.io.js', function(error, data) {  
       if (error) {  
