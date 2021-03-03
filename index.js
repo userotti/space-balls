@@ -1,24 +1,49 @@
-var World = require('index-ecs').World;
+const http = require("http");
+var url = require('url');  
+var fs = require('fs');  
 
+const World = require('index-ecs').World;
+const kickoff = require("./loop");
 
-const hrtimeMs = function() {
-  let time = process.hrtime()
-  return time[0] * 1000 + time[1] / 1000000
+gameInit = ()=>{
+  
 }
 
-const TICK_RATE = 200
-let tick = 0
-let previous = hrtimeMs()
-let tickLengthMs = 1000 / TICK_RATE
-
-const loop = () => {
-  setTimeout(loop, tickLengthMs)
-  let now = hrtimeMs()
-  let delta = (now - previous) / 1000
-  console.log('delta', delta)
-  // game.update(delta, tick) // game logic would go here
-  previous = now
-  tick++
+//Regiter my main game callback
+gameLoopCallback = (delta)=>{
+  console.log("do game stuff, delta: ", delta);
 }
 
-loop() // starts the loop
+//Create the loop function by calling kickoff 
+const loop = kickoff(gameInit, gameLoopCallback);
+
+//Kick off the whole thing
+loop();
+
+//Main request handler
+const requestListener = function (req, res) {
+  fs.readFile('./page.html', function(error, data) {  
+      if (error) {  
+        res.writeHead(404);  
+        res.write(error);  
+        res.end();  
+      } else {  
+        res.writeHead(200, {  
+              'Content-Type': 'text/html'  
+          });  
+        res.write(data);  
+        res.end();  
+      }  
+  });
+};
+
+
+const host = 'localhost';
+const port = 8000;
+
+//Build the server
+const server = http.createServer(requestListener);
+server.listen(port, host, () => {
+  console.log(`Server is running on http://${host}:${port}`);
+});
+
