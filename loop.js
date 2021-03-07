@@ -3,7 +3,7 @@ const hrtimeMs = function() {
   return time[0] * 1000 + time[1] / 1000000
 }
 
-const TICK_RATE = 1
+const TICK_RATE = 5
 let tick = 0
 let previous = hrtimeMs()
 let tickLengthMs = 1000 / TICK_RATE

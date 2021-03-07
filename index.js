@@ -17,16 +17,22 @@ server.listen(port, host, () => {
   console.log(`Server is running on http://${host}:${port}`);
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-});
-
 
 //Do the setup with World stuff
 game.gameInit(io);
 
 //Create the loop function by calling kickoff 
 const loop = kickoff(game.gameLoopCallback);
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+});
+
+
+
+
+
+
 
 //Kick off the whole thing
 loop();

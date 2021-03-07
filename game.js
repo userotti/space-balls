@@ -1,6 +1,9 @@
 const World = require('index-ecs').World;
 const broadcast = require('./systems/broadcast');
 const physics = require('./systems/physics');
+const remove = require('./systems/remove');
+const entityCreator = require('./entities');
+
 
 
 var world = new World();
@@ -11,26 +14,31 @@ module.exports = {
   gameInit: (_io)=>{
     
     io = _io;
-    var player1 = world.createEntity();
+    
+    entityCreator.createPlayer(world);
 
-    world.addComponent(player1, "position", {
-      x: 220,
-      y: 240,
+    world.on("entity-removed", function(entity) {
+      return console.log("Goodbye ID " + entity.uuid);
     });
 
-    world.addComponent(player1, "velocity", {
-      x: 10,
-      y: 0,
+    io.on('fire', (socket) => {
+      entityCreator.createBullet(world, {
+        "position": {
+          x: 220,
+          y: 240,
+        },
+        "velocity": {
+          x: 0,
+          y: 0,
+        }
+      });
     });
-
-    world.addComponent(player1, "visual", {
-      color: "red",
-      size: 10
-    });
+    
   },
 
   //Regiter my main game callback
   gameLoopCallback: (delta)=>{
+    remove(world);
     broadcast(io, world, delta);
     physics(world, delta);
   }
