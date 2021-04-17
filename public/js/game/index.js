@@ -1,6 +1,5 @@
-console.log("here we go");
-const canvasWidth = 640;
-const canvasHeight = 480;
+const canvasWidth = 800;
+const canvasHeight = 600;
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
@@ -12,9 +11,19 @@ var user = {
 }
 
 var entities = [];
+var messages = [];
+
 socket.on('state', function(event) {
-  console.log("event.entities.length: ", event.entities.length);
   entities = event.entities
+});
+
+socket.on('message', function(event) {
+  messages.push({
+    delay: 5000,
+    text: event.message,
+  }); 
+
+  console.log("messages: ", messages);
 });
 
 const aiming = {
@@ -84,6 +93,23 @@ setInterval(()=>{
     ctx.fillText(entity.details.name, entity.position.x, entity.position.y - 10);
   }
 
+  
+  //Remove message that are done with the delay.
+  messages = messages.filter((message, index)=>{
+
+    if (message.delay > 0) {
+      message.delay = message.delay - 50;
+      ctx.font = "10px Arial";
+      ctx.fillStyle = "white";
+      ctx.fillText(message.text, 20, canvasHeight - (index * 15) - 20);
+    } else {
+      message.delay = 0
+    }
+
+    return !!message.delay
+  })
+
+
   if (aiming.active){
     ctx.strokeStyle = "white";
     ctx.beginPath();
@@ -91,7 +117,5 @@ setInterval(()=>{
     ctx.lineTo(aiming.mousemove.x, aiming.mousemove.y);
     ctx.stroke();
   }
-  
 
-
-}, 100)
+}, 50)

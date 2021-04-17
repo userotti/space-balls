@@ -15,9 +15,6 @@ module.exports = {
   gameInit: (_io)=>{
     
     io = _io;
-    
-    
-
     world.on("entity-removed", function(entity) {
       return console.log("Goodbye ID " + entity.uuid);
     });
@@ -37,7 +34,6 @@ module.exports = {
     
   },
 
-  //Regiter my main game callback
   gameLoopCallback: (delta)=>{
     remove(world);
     broadcast(io, world, delta);
@@ -45,20 +41,22 @@ module.exports = {
   },
 
   addUser: (username)=>{
-
     const playerEntity = entityCreator.createPlayer(world, username);
+    io.emit('message', {
+      message: `${playerEntity.details.name} joined the solar system.`
+    })
     return playerEntity;
-    
   },
 
   fire: (message)=>{
-
-    //Notify all immediately
-
     const {userId, vector} = message;
     const userFiringBullet = world.findById(userId);
-
     if (userFiringBullet){
+
+      io.emit('message', {
+        message: `shot fired by ${userFiringBullet.details.name}!`
+      })
+
       entityCreator.createBullet(world, {
         "details": {
           name: `${userFiringBullet.details.name}'s bullet`,
@@ -73,10 +71,6 @@ module.exports = {
         }
       });
     }
-
-   
-
-
   }
 
 }
