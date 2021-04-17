@@ -33,9 +33,12 @@ const loop = kickoff(game.gameLoopCallback);
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+  
+  game.addUser({}, Math.random());
 
   socket.on('fire', (message) => {
     console.log('Fire!: ', message);
+    game.fire(message);
   });
 
 });

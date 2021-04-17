@@ -7,6 +7,7 @@ const entityCreator = require('./entities');
 
 
 var world = new World();
+var users = [];
 var io;
 
 module.exports = {
@@ -41,6 +42,34 @@ module.exports = {
     remove(world);
     broadcast(io, world, delta);
     physics(world, delta);
+  },
+
+  addUser: (user, id)=>{
+    users.push({
+      id: id,
+      ...user
+    })
+  },
+
+  fire: (message)=>{
+
+    //Notify all immediately
+    // io.emit('fire', message);
+
+    const {user, vector} = message;
+
+    entityCreator.createBullet(world, {
+      "position": {
+        x: 220,
+        y: 240,
+      },
+      "velocity": {
+        x: vector.x / 10,
+        y: vector.y / 10,
+      }
+    });
+
+
   }
 
 }
