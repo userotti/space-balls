@@ -37,6 +37,52 @@ module.exports = {
       size: 5
     });
 
+    world.addComponent(bullet, "acceleration", {
+      x: 0,
+      y: 0,
+    });
+
+    world.addComponent(bullet, "charge", {
+      value: -1 
+    });
+
+    world.addComponent(bullet, "bullet", true);
+
+    world.addComponent(bullet, "countdown", {
+      cycles: 100
+    });
+
+
+  },
+
+  createPlanet: (world, planetName)=>{
+    var planet = world.createEntity();
+
+    world.addComponent(planet, "position", {
+      x: Math.random()*100-Math.random()*100 + 400,
+      y: Math.random()*100-Math.random()*100 + 300,
+    });
+
+    world.addComponent(planet, "velocity", {
+      x: 0,
+      y: 0,
+    });
+
+    world.addComponent(planet, "visual", {
+      shape: "circle",
+      color: "green",
+      size: Math.random()*50 + 20
+    });
+
+    world.addComponent(planet, "charge", {
+      value: 100
+    });
+
+    world.addComponent(planet, "planet", true);
+
+    world.addComponent(planet, "details", {
+      name: planetName,
+    });
   },
 
 

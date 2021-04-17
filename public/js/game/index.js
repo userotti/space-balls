@@ -22,8 +22,6 @@ socket.on('message', function(event) {
     delay: 5000,
     text: event.message,
   }); 
-
-  console.log("messages: ", messages);
 });
 
 const aiming = {
@@ -50,16 +48,18 @@ const shot = {
 }
 //Setup interaction
 document.getElementById("canvas").addEventListener("mousedown", function(event) {
-  aiming.mousedown.x = event.clientX
-  aiming.mousedown.y = event.clientY
+  aiming.mousedown.x = event.offsetX
+  aiming.mousedown.y = event.offsetY
+
+  console.log("event: ", event);
 
   aiming.active = true;
 
 });
 
 document.getElementById("canvas").addEventListener("mouseup", function(event) {
-  aiming.mouseup.x = event.clientX
-  aiming.mouseup.y = event.clientY
+  aiming.mouseup.x = event.offsetX
+  aiming.mouseup.y = event.offsetY
 
   aiming.active = false;
 
@@ -76,27 +76,36 @@ document.getElementById("canvas").addEventListener("mouseup", function(event) {
 });
 
 document.getElementById("canvas").addEventListener("mousemove", function(event) {
-  aiming.mousemove.x = event.clientX;
-  aiming.mousemove.y = event.clientY;
+  aiming.mousemove.x = event.offsetX;
+  aiming.mousemove.y = event.offsetY;
 });
 
 
 setInterval(()=>{
+
   ctx.clearRect(0,0,canvasWidth,canvasHeight);
 
   for (entity of entities){
     ctx.fillStyle = entity.visual.color;
-    ctx.fillRect(entity.position.x-entity.visual.size/2, entity.position.y-entity.visual.size/2, entity.visual.size, entity.visual.size);
+
+    if (entity.visual.shape == "square"){
+      ctx.fillRect(entity.position.x-entity.visual.size/2, entity.position.y-entity.visual.size/2, entity.visual.size, entity.visual.size);
+    }
+
+    if (entity.visual.shape == "circle"){
+      ctx.beginPath();
+      ctx.arc(entity.position.x, entity.position.y, entity.visual.size, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    
 
     ctx.font = "10px Arial";
     ctx.fillStyle = "white";
     ctx.fillText(entity.details.name, entity.position.x, entity.position.y - 10);
   }
-
   
   //Remove message that are done with the delay.
   messages = messages.filter((message, index)=>{
-
     if (message.delay > 0) {
       message.delay = message.delay - 50;
       ctx.font = "10px Arial";
@@ -105,7 +114,6 @@ setInterval(()=>{
     } else {
       message.delay = 0
     }
-
     return !!message.delay
   })
 

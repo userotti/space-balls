@@ -31,6 +31,8 @@ module.exports = {
         }
       });
     });
+
+    entityCreator.createPlanet(world, 'Andromedon')
     
   },
 

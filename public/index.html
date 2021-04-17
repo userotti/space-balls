@@ -1,10 +1,66 @@
 <html>
   <head>
     <script type="application/javascript" src="js/socket.io/socket.io.min.js"></script>
+    <style>
+      .button {
+        width: 50px;
+        height: 50px;
+        background-color: #555;
+        margin: 2px; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #888;  
+      }
+
+      .button_spacer {
+        width: 50px;
+        height: 50px;
+        background-color: #333;
+        margin: 2px;
+      }
+
+    </style>
   </head>
   <body>
-    <canvas id="canvas" width="800" height="600" style="background-color: black">
-    </canvas>
+    <div style="display: flex; flex-direction: row; justify-content: center;">
+      <canvas id="canvas" width="800" height="600" style="background-color: black; width: 800px; height: 600px;">
+      </canvas>
+      <div style="display: flex; flex-direction: column; justify-content: flex-start; background-color: #333; width: 170px; padding: 20px">
+        <span style="color: #888;">Camera Controls:</span>
+        <div style="display: flex; flex-wrap: wrap;">
+
+          <div class="button">
+            -
+          </div>
+          <div class="button">
+            up
+          </div>
+          <div class="button">
+            +
+          </div>
+          <div class="button">
+            left
+          </div>
+          <div class="button_spacer">
+            
+          </div>
+          <div class="button">
+            right
+          </div>
+          <div class="button_spacer">
+            
+          </div>
+          <div class="button">
+            down
+          </div>
+          <div class="button_spacer"></div>
+          
+
+        </div>
+      </div>
+    </div>
+   
     <script type="application/javascript" src="js/game/index.js"></script>
   </body>
 </html> 
