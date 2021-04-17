@@ -10,6 +10,16 @@ var user = {
   id: 0
 }
 
+var zoom = {
+  x: 1,
+  y: 1,
+}
+
+var pan = {
+  x: 0,
+  y: 0
+}
+
 var entities = [];
 var messages = [];
 
@@ -50,9 +60,6 @@ const shot = {
 document.getElementById("canvas").addEventListener("mousedown", function(event) {
   aiming.mousedown.x = event.offsetX
   aiming.mousedown.y = event.offsetY
-
-  console.log("event: ", event);
-
   aiming.active = true;
 
 });
@@ -80,29 +87,75 @@ document.getElementById("canvas").addEventListener("mousemove", function(event) 
   aiming.mousemove.y = event.offsetY;
 });
 
+document.getElementById("zoom_in").addEventListener("click", function(event) {
+  console.log("zoom_in");
+  zoom.x *= 1.2;
+  zoom.y *= 1.2;
+});
+
+document.getElementById("zoom_out").addEventListener("click", function(event) {
+  zoom.x *= 0.8;
+  zoom.y *= 0.8;
+});
+
+document.getElementById("pan_up").addEventListener("click", function(event) {
+  pan.y += 50;
+  console.log("up")
+});
+
+document.getElementById("pan_down").addEventListener("click", function(event) {
+  pan.y -= 50;
+});
+
+document.getElementById("pan_left").addEventListener("click", function(event) {
+  pan.x += 50;
+});
+
+document.getElementById("pan_right").addEventListener("click", function(event) {
+  pan.x -= 50;
+});
+
 
 setInterval(()=>{
 
   ctx.clearRect(0,0,canvasWidth,canvasHeight);
 
+  
+  
+
   for (entity of entities){
     ctx.fillStyle = entity.visual.color;
 
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.translate(canvasWidth/2, canvasHeight/2);
+    ctx.scale(zoom.x, zoom.y);
+    ctx.translate(-(canvasWidth/2), -(canvasHeight/2));
+    ctx.translate(pan.x, pan.y);
+    ctx.translate(entity.position.x, entity.position.y);
+    
+      
+
     if (entity.visual.shape == "square"){
-      ctx.fillRect(entity.position.x-entity.visual.size/2, entity.position.y-entity.visual.size/2, entity.visual.size, entity.visual.size);
+      ctx.fillRect(0-entity.visual.size/2, 0-entity.visual.size/2, entity.visual.size, entity.visual.size);
     }
 
     if (entity.visual.shape == "circle"){
       ctx.beginPath();
-      ctx.arc(entity.position.x, entity.position.y, entity.visual.size, 0, 2 * Math.PI);
+      ctx.arc(0, 0, entity.visual.size, 0, 2 * Math.PI);
       ctx.fill();
     }
-    
 
+    ctx.scale(1/zoom.x, 1/zoom.y);
+
+    ctx.fillStyle = entity.visual.color;
     ctx.font = "10px Arial";
     ctx.fillStyle = "white";
-    ctx.fillText(entity.details.name, entity.position.x, entity.position.y - 10);
+    ctx.fillText(entity.details.name, 0, 0 - 10);
+    
   }
+
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   
   //Remove message that are done with the delay.
   messages = messages.filter((message, index)=>{
