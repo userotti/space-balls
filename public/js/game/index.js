@@ -13,7 +13,7 @@ var user = {
 
 var entities = [];
 socket.on('state', function(event) {
-  // console.log("event.entities: ", event.entities);
+  console.log("event.entities.length: ", event.entities.length);
   entities = event.entities
 });
 
@@ -54,9 +54,11 @@ document.getElementById("canvas").addEventListener("mouseup", function(event) {
 
   aiming.active = false;
 
-  console.log(socket);
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("userId");
+
   socket.emit('fire', {
-    user: user.id,
+    userId: userId,
     vector: {
       x: aiming.mousedown.x - aiming.mouseup.x,
       y: aiming.mousedown.y - aiming.mouseup.y,
@@ -75,7 +77,11 @@ setInterval(()=>{
 
   for (entity of entities){
     ctx.fillStyle = entity.visual.color;
-    ctx.fillRect(entity.position.x, entity.position.y, entity.visual.size, entity.visual.size);
+    ctx.fillRect(entity.position.x-entity.visual.size/2, entity.position.y-entity.visual.size/2, entity.visual.size, entity.visual.size);
+
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText(entity.details.name, entity.position.x, entity.position.y - 10);
   }
 
   if (aiming.active){

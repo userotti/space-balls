@@ -4,17 +4,30 @@ const kickoff = require("./loop");
 const httpRequestHandler = require("./httpRequestHandler");
 const serveStatic = require('serve-static')
 const game = require('./game.js');
-
+var finalhandler = require('finalhandler')
 
 
 const host = 'localhost';
 const port = 8000;
 
+
 //Build the server
-var serve = serveStatic('public', { 'index': ['index.html', 'index.htm'] })
+var serve = serveStatic('public', {
+  'setHeaders': (res, path) => {
+    if (path.includes('.html')){
+      res.setHeader('Content-Type', 'text/html');
+    }
+  }
+})
+
 
 const server = http.createServer(function onRequest (req, res) {
-  serve(req, res, httpRequestHandler(req, res))
+
+  httpRequestHandler(req, res);
+
+  serve(req, res, ()=>{
+    console.log("I dont care!");
+  });
 });
 
 const io = createSocketIo(server);
@@ -33,9 +46,6 @@ const loop = kickoff(game.gameLoopCallback);
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  
-  game.addUser({}, Math.random());
-
   socket.on('fire', (message) => {
     console.log('Fire!: ', message);
     game.fire(message);
@@ -47,21 +57,3 @@ io.on('connection', (socket) => {
 
 //Kick off the whole thing
 loop();
-
-
-/*
-var finalhandler = require('finalhandler')
-var http = require('http')
-var serveStatic = require('serve-static')
- 
-// Serve up public/ftp folder
-var serve = serveStatic('public/ftp', { 'index': ['index.html', 'index.htm'] })
- 
-// Create server
-var server = http.createServer(function onRequest (req, res) {
-  serve(req, res, finalhandler(req, res))
-})
- 
-// Listen
-server.listen(3000)
-*/

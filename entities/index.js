@@ -1,13 +1,13 @@
 module.exports = {
-  createPlayer: (world)=>{
+  createPlayer: (world, username)=>{
     var player = world.createEntity();
     world.addComponent(player, "position", {
-      x: 220,
-      y: 240,
+      x: Math.random()*100-Math.random()*100 + 220,
+      y: Math.random()*100-Math.random()*100 + 240,
     });
 
     world.addComponent(player, "velocity", {
-      x: 10,
+      x: 0,
       y: 0,
     });
 
@@ -16,6 +16,12 @@ module.exports = {
       color: "blue",
       size: 20
     });
+
+    world.addComponent(player, "details", {
+      name: username,
+    });
+
+    return player;
   },
 
   createBullet: (world, components)=>{
@@ -30,7 +36,9 @@ module.exports = {
       color: "red",
       size: 5
     });
+
   },
+
 
   
 }

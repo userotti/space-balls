@@ -16,7 +16,7 @@ module.exports = {
     
     io = _io;
     
-    entityCreator.createPlayer(world);
+    
 
     world.on("entity-removed", function(entity) {
       return console.log("Goodbye ID " + entity.uuid);
@@ -44,30 +44,37 @@ module.exports = {
     physics(world, delta);
   },
 
-  addUser: (user, id)=>{
-    users.push({
-      id: id,
-      ...user
-    })
+  addUser: (username)=>{
+
+    const playerEntity = entityCreator.createPlayer(world, username);
+    return playerEntity;
+    
   },
 
   fire: (message)=>{
 
     //Notify all immediately
-    // io.emit('fire', message);
 
-    const {user, vector} = message;
+    const {userId, vector} = message;
+    const userFiringBullet = world.findById(userId);
 
-    entityCreator.createBullet(world, {
-      "position": {
-        x: 220,
-        y: 240,
-      },
-      "velocity": {
-        x: vector.x / 10,
-        y: vector.y / 10,
-      }
-    });
+    if (userFiringBullet){
+      entityCreator.createBullet(world, {
+        "details": {
+          name: `${userFiringBullet.details.name}'s bullet`,
+        },
+        "position": {
+          x: userFiringBullet.position.x,
+          y: userFiringBullet.position.y,
+        },
+        "velocity": {
+          x: vector.x / 20,
+          y: vector.y / 20,
+        }
+      });
+    }
+
+   
 
 
   }
