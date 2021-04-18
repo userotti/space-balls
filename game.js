@@ -89,10 +89,11 @@ module.exports = {
   chat: (data)=>{
     const {userId, message} = data;
     const userChatting = world.findById(userId);
-    io.emit('message', {
-      color: userChatting.visual.color,
-      message: `${userChatting.details.name}: ${message}`
-    })
+    if (userChatting){
+      io.emit('message', {
+        message: `${userChatting.details.name}: ${message}`
+      })  
+    }
   },
 
   fire: (message)=>{
