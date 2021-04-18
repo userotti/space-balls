@@ -5,7 +5,13 @@ const queryParams = new URLSearchParams(window.location.search);
 const currentUserId = queryParams.get("userId");
 if (currentUserId){
   document.getElementById("join_button").style="display: none;";
+  document.getElementById("spectate_button").style="display: flex;";
+} else {
+  document.getElementById("join_button").style="";
+  document.getElementById("spectate_button").style="display: none;";
 }
+
+
 
 
 var canvas = document.getElementById('canvas');
@@ -35,10 +41,14 @@ socket.on('state', function(event) {
 });
 
 socket.on('message', function(event) {
-  messages.push({
-    delay: 5000,
-    text: event.message,
-  }); 
+  const messageBox = document.getElementById("message_box");
+
+  messageTag = document.createElement('span');
+  messageTag.innerText  = `-${event.message}`;
+  messageTag.style = `font-size: ${event.shout_level ? event.shout_level : 12}px;"`;
+  
+  messageBox.insertBefore(messageTag, messageBox.childNodes[0]);
+  
 });
 
 const aiming = {
@@ -171,17 +181,17 @@ setInterval(()=>{
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   
   //Remove message that are done with the delay.
-  messages = messages.filter((message, index)=>{
-    if (message.delay > 0) {
-      message.delay = message.delay - 50;
-      ctx.font = "10px Arial";
-      ctx.fillStyle = "white";
-      ctx.fillText(message.text, 20, canvasHeight - (index * 15) - 20);
-    } else {
-      message.delay = 0
-    }
-    return !!message.delay
-  })
+  // messages = messages.filter((message, index)=>{
+  //   if (message.delay > 0) {
+  //     message.delay = message.delay - 50;
+  //     ctx.font = "10px Arial";
+  //     ctx.fillStyle = "white";
+  //     ctx.fillText(message.text, 20, canvasHeight - (index * 15) - 20);
+  //   } else {
+  //     message.delay = 0
+  //   }
+  //   return !!message.delay
+  // })
 
 
   if (aiming.active){

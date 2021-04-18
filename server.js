@@ -44,11 +44,9 @@ const loop = kickoff(game.gameLoopCallback);
 
 io.on('connection', (socket) => {
 
-  console.log('a user connected');
-  
   const queryObject = querystring.parse(socket.handshake.headers.referer.split('?')[1]);
   console.log('a user userId', queryObject['userId']);
-  
+
   if (queryObject['userId'] && game.userIdCheck(queryObject['userId'])){
     for (let connectionId of socket.rooms.keys()) {
       game.linkUserIdWithConnectionId(queryObject['userId'], connectionId)
@@ -56,7 +54,6 @@ io.on('connection', (socket) => {
   }
 
   socket.on('disconnecting', () => {
-    console.log("socket.rooms on disconnect: ",socket.rooms); // the Set contains at least the socket ID
     for (let connectionId of socket.rooms.keys()) {
       if (!!game.isLinkedToActivePlayer(connectionId)){
         game.removeUserWithConnectionId(connectionId)  

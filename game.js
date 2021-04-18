@@ -67,7 +67,8 @@ module.exports = {
   addUser: (username)=>{
     const playerEntity = entityCreator.createPlayer(world, username);
     io.emit('message', {
-      message: `${playerEntity.details.name} joined the solar system.`
+      message: `${playerEntity.details.name} joined the solar system.`,
+      shout_level: 20,
     })
     return playerEntity;
   },

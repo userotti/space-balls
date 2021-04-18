@@ -21,16 +21,51 @@
         margin: 2px;
       }
 
+      #join_button {
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        position: relative; 
+        width: 300px;
+        height: 40px;
+        background: red;
+        margin: 20px;
+        color: white
+      }
+
+      #spectate_button {
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+        width: 300px;
+        height: 40px;
+        background: blue;
+        margin: 20px;
+        color: white;
+      }
+
     </style>
   </head>
   <body>
     
     <div style="display: flex; flex-direction: row; justify-content: center;">
-      <div style="width: 800px; height: 600px;">
-        <canvas id="canvas" width="800" height="600" style="background-color: black; ">
+
+      <div style="background-color: #333; width: 170px; overflow-y: auto; height: 560px; padding: 20px;">
+        <span style="color: #888; ">Messages:</span>
+        <div style="display: flex; flex-direction: column; justify-content: flex-start; color: #888;" id="message_box">
+
+        </div>
+      </div>
+
+      <div style="width: 600px; height: 600px;">
+        <canvas id="canvas" width="600" height="600" style="background-color: black; ">
         </canvas>
-        <a id="join_button" href="newplayer.html" style="display: flex; justify-content: center; align-items: center; position: relative; bottom: 80; left: 0; width: 200px; height: 40px; background: red; margin: 20px; color: white">
+        <a id="join_button" href="newplayer.html">
+          You are spectating!
           Join the game!
+        </a> 
+        <a id="spectate_button" href="index.html">
+          Disconnect and swtich to spectating mode
         </a> 
       </div>
       
@@ -68,6 +103,8 @@
         </div>
       </div>
     </div>
+
+    
    
     <script type="application/javascript" src="js/game/index.js"></script>
   </body>
