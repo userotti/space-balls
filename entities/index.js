@@ -71,7 +71,7 @@ module.exports = {
     world.addComponent(planet, "visual", {
       shape: "circle",
       color: "green",
-      size: Math.random()*50 + 20
+      size: Math.random()*20 + 50
     });
 
     world.addComponent(planet, "charge", {
