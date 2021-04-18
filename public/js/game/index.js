@@ -6,9 +6,28 @@ const currentUserId = queryParams.get("userId");
 if (currentUserId){
   document.getElementById("join_button").style="display: none;";
   document.getElementById("spectate_button").style="display: flex;";
+
+  
+  
+  const chatInputElement = document.getElementById("chat_input");
+  chatInputElement.addEventListener('keydown', (event)=>{
+    
+    if (currentUserId && event.key == "Enter") {
+      console.log("gooi chat", chatInputElement.value);
+      socket.emit('chat', {
+        userId: currentUserId,
+        message: chatInputElement.value,
+      });
+
+      chatInputElement.value = '';
+    }
+    
+  })
+  
 } else {
   document.getElementById("join_button").style="";
   document.getElementById("spectate_button").style="display: none;";
+  document.getElementById("chat_widget").style="display: none;";
 }
 
 
@@ -45,7 +64,7 @@ socket.on('message', function(event) {
 
   messageTag = document.createElement('span');
   messageTag.innerText  = `-${event.message}`;
-  messageTag.style = `font-size: ${event.shout_level ? event.shout_level : 12}px;"`;
+  messageTag.style = `font-size: 12px;"`;
   
   messageBox.insertBefore(messageTag, messageBox.childNodes[0]);
   

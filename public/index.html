@@ -50,11 +50,17 @@
     
     <div style="display: flex; flex-direction: row; justify-content: center;">
 
-      <div style="background-color: #333; width: 170px; overflow-y: auto; height: 560px; padding: 20px;">
-        <span style="color: #888; ">Messages:</span>
-        <div style="display: flex; flex-direction: column; justify-content: flex-start; color: #888;" id="message_box">
+      <div style="display: flex; flex-direction: column; justify-content: space-between; background-color: #333; width: 170px; overflow-y: auto; height: 600px;">
+        <div style="display: flex; flex-direction: column-reverse; justify-content: flex-start; color: #aaa; height: 100%; padding: 10px;" id="message_box">
 
         </div>
+        <div id="chat_widget" style="background-color: #444; color: #aaa; padding: 5px;">
+          <label>Chat:</label>
+          <br>
+          <input id="chat_input" style="width: 100%; margin-top: 10px;">
+          <br>
+        </div>
+        
       </div>
 
       <div style="width: 600px; height: 600px;">

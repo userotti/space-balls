@@ -67,6 +67,11 @@ io.on('connection', (socket) => {
     game.fire(message);
   });
 
+  socket.on('chat', (data) => {
+    console.log('data!: ', data);
+    game.chat(data);
+  });
+
 });
 
 

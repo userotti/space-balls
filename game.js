@@ -50,8 +50,6 @@ module.exports = {
       id: connectionId
     });
 
-    console.log("player: ", player);
-
   },
 
   userIdCheck: (userId)=>{
@@ -68,7 +66,6 @@ module.exports = {
     const playerEntity = entityCreator.createPlayer(world, username);
     io.emit('message', {
       message: `${playerEntity.details.name} joined the solar system.`,
-      shout_level: 20,
     })
     return playerEntity;
   },
@@ -89,13 +86,22 @@ module.exports = {
     
   },
 
+  chat: (data)=>{
+    const {userId, message} = data;
+    const userChatting = world.findById(userId);
+    io.emit('message', {
+      color: userChatting.visual.color,
+      message: `${userChatting.details.name}: ${message}`
+    })
+  },
+
   fire: (message)=>{
     const {userId, vector} = message;
     const userFiringBullet = world.findById(userId);
     if (userFiringBullet){
 
       io.emit('message', {
-        message: `shot fired by ${userFiringBullet.details.name}!`
+        message: `shot FIRED by ${userFiringBullet.details.name}!`
       })
 
       entityCreator.createBullet(world, {
