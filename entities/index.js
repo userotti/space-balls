@@ -21,6 +21,8 @@ module.exports = {
       name: username,
     });
 
+    world.addComponent(player, "player", true);
+
     return player;
   },
 

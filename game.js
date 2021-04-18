@@ -36,6 +36,24 @@ module.exports = {
     
   },
 
+  isLinkedToActivePlayer: (connectionId) => {
+    return world.find(['player']).find((player)=>{
+      return player.socketConnection.id == connectionId
+    })
+  },
+
+  linkUserIdWithConnectionId: (userId, connectionId) => {
+    var player = world.findById(userId);
+
+
+    world.addComponent(player, "socketConnection", {
+      id: connectionId
+    });
+
+    console.log("player: ", player);
+
+  },
+
   userIdCheck: (userId)=>{
     return !!world.findById(userId);
   },
@@ -52,6 +70,22 @@ module.exports = {
       message: `${playerEntity.details.name} joined the solar system.`
     })
     return playerEntity;
+  },
+
+  removeUserWithConnectionId: (connectionId)=>{
+    
+    for (player of world.find(['player'])) {
+      if (player.socketConnection && connectionId && player.socketConnection.id == connectionId){
+        world.removeEntity(player);
+        
+        io.emit('message', {
+          message: `${player.details.name} disconnected.`
+        })
+
+      }
+    }
+
+    
   },
 
   fire: (message)=>{

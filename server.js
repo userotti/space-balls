@@ -5,7 +5,7 @@ const httpRequestHandler = require("./httpRequestHandler");
 const serveStatic = require('serve-static')
 const game = require('./game.js');
 var finalhandler = require('finalhandler')
-
+const querystring = require('querystring');
 
 const host = '0.0.0.0';
 const port = '8001';
@@ -43,7 +43,28 @@ game.gameInit(io);
 const loop = kickoff(game.gameLoopCallback);
 
 io.on('connection', (socket) => {
+
   console.log('a user connected');
+  
+  const queryObject = querystring.parse(socket.handshake.headers.referer.split('?')[1]);
+  console.log('a user userId', queryObject['userId']);
+  
+  if (queryObject['userId'] && game.userIdCheck(queryObject['userId'])){
+    for (let connectionId of socket.rooms.keys()) {
+      game.linkUserIdWithConnectionId(queryObject['userId'], connectionId)
+    }
+  }
+
+  socket.on('disconnecting', () => {
+    console.log("socket.rooms on disconnect: ",socket.rooms); // the Set contains at least the socket ID
+    for (let connectionId of socket.rooms.keys()) {
+      if (!!game.isLinkedToActivePlayer(connectionId)){
+        game.removeUserWithConnectionId(connectionId)  
+      }
+    }
+  });
+
+  
   socket.on('fire', (message) => {
     console.log('Fire!: ', message);
     game.fire(message);

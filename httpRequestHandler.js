@@ -2,7 +2,6 @@
 var fs = require('fs');  
 const game = require('./game.js');
 const querystring = require('querystring');
-var finalhandler = require('finalhandler')
 
 //Main request handler
 module.exports = function (req, res) {
@@ -21,7 +20,7 @@ module.exports = function (req, res) {
       if (queryObject['userId'] && !game.userIdCheck(queryObject['userId'])){
         console.log("redirect????")
         res.writeHead(302,
-          {Location: '/newgame.html'}
+          {Location: '/newplayer.html'}
         );
         res.end();
       }
