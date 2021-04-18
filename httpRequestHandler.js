@@ -13,11 +13,22 @@ module.exports = function (req, res) {
   
   
   switch (req.url.split('?')[0]) {
-    case "/createplayer":
 
+    case "/index.html": {
+      console.log("case hit");
       const queryObject = querystring.parse(req.url.split('?')[1]);
+      console.log("game.userIdCheck(queryObject['userId']): ", game.userIdCheck(queryObject['userId']));
+      if (queryObject['userId'] && !game.userIdCheck(queryObject['userId'])){
+        console.log("redirect????")
+        res.writeHead(302,
+          {Location: '/newgame.html'}
+        );
+        res.end();
+      }
+    }
       
-      console.log("queryObject: ", queryObject);
+    case "/createplayer": {
+      const queryObject = querystring.parse(req.url.split('?')[1]);
       if (queryObject['username'] && queryObject['username'].length){
         
         const newguy = game.addUser(queryObject['username']);
@@ -27,12 +38,10 @@ module.exports = function (req, res) {
         );
         res.end();
         
-      } else {
-        res.writeHead(302,
-          {Location: '/newgame.html'}
-        );
-        res.end();
       }
+    }
+
+      
       
       
     break;

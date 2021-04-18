@@ -13,11 +13,7 @@ const port = '8001';
 
 //Build the server
 var serve = serveStatic('public', {
-  'setHeaders': (res, path) => {
-    if (path.includes('.html')){
-      res.setHeader('Content-Type', 'text/html');
-    }
-  }
+  
 })
 
 
@@ -25,9 +21,11 @@ const server = http.createServer(function onRequest (req, res) {
 
   httpRequestHandler(req, res);
 
-  serve(req, res, ()=>{
-    console.log("I dont care!");
+  serve(req, res, (e)=>{
+    console.log("I dont care!:", e);
   });
+
+  
 });
 
 const io = createSocketIo(server);

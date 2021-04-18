@@ -36,6 +36,10 @@ module.exports = {
     
   },
 
+  userIdCheck: (userId)=>{
+    return !!world.findById(userId);
+  },
+
   gameLoopCallback: (delta)=>{
     remove(world);
     broadcast(io, world, delta);

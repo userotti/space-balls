@@ -1,6 +1,13 @@
 const canvasWidth = 800;
 const canvasHeight = 600;
 
+const queryParams = new URLSearchParams(window.location.search);
+const currentUserId = queryParams.get("userId");
+if (currentUserId){
+  document.getElementById("join_button").style="display: none;";
+}
+
+
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 

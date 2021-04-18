@@ -24,9 +24,16 @@
     </style>
   </head>
   <body>
+    
     <div style="display: flex; flex-direction: row; justify-content: center;">
-      <canvas id="canvas" width="800" height="600" style="background-color: black; width: 800px; height: 600px;">
-      </canvas>
+      <div style="width: 800px; height: 600px;">
+        <canvas id="canvas" width="800" height="600" style="background-color: black; ">
+        </canvas>
+        <a id="join_button" href="newgame.html" style="display: flex; justify-content: center; align-items: center; position: relative; bottom: 80; left: 0; width: 200px; height: 40px; background: red; margin: 20px; color: white">
+          Join the game!
+        </a> 
+      </div>
+      
       <div style="display: flex; flex-direction: column; justify-content: flex-start; background-color: #333; width: 170px; padding: 20px">
         <span style="color: #888;">Camera Controls:</span>
         <div style="display: flex; flex-wrap: wrap;">
