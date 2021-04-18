@@ -7,8 +7,8 @@ const game = require('./game.js');
 var finalhandler = require('finalhandler')
 
 
-const host = 'localhost';
-const port = 8000;
+const host = '0.0.0.0';
+const port = '8001';
 
 
 //Build the server

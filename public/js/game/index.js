@@ -150,7 +150,13 @@ setInterval(()=>{
     ctx.fillStyle = entity.visual.color;
     ctx.font = "10px Arial";
     ctx.fillStyle = "white";
-    ctx.fillText(entity.details.name, 0, 0 - 10);
+
+    if (entity.countdown){
+      ctx.fillText(`${entity.details.name} ${entity.countdown.cycles}`, 0, 0 - 10);
+    } else {
+      ctx.fillText(entity.details.name, 0, 0 - 10);
+    }
+    
     
   }
 

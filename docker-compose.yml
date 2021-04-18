@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  apps:
+    image: node:14-alpine
+    working_dir: /usr/app
+    volumes:
+      - ./:/usr/app
+    command: node server.js
+    ports:
+      - 8001:8001
