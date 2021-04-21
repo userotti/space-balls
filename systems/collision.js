@@ -35,16 +35,17 @@ module.exports = (io, world, delta)=>{
       if (Math.abs(positionDifference.x*2) < player.visual.size+bullet.visual.size && Math.abs(positionDifference.y*2) < player.visual.size+bullet.visual.size){
         if (bullet.countdown.start_cycles - bullet.countdown.cycles > 5 ){
 
-          
-
           world.removeEntity(bullet);
           world.addComponent(player, "destroyed", {
-            destroyed_by_uuid: bullet.details.player_uuid
+            destroyed_by_socket_connection_id: bullet.details.player_socket_connection_id
           })
 
           world.removeEntity(player);
 
-          const bulletPlayer = world.findById(bullet.details.player_uuid);
+          const bulletPlayer = world.find(['player']).find((player)=>{
+            return player.socketConnection.id == bullet.details.player_socket_connection_id
+          })
+
           if (bulletPlayer){
             bulletPlayer.details.score = bulletPlayer.details.score + 1; 
           }

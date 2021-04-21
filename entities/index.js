@@ -14,7 +14,7 @@ module.exports = {
     world.addComponent(player, "visual", {
       shape: "square",
       color: "blue",
-      size: 20
+      size: 40
     });
 
     world.addComponent(player, "details", {
@@ -37,7 +37,7 @@ module.exports = {
     world.addComponent(bullet, "visual", {
       shape: "square",
       color: "red",
-      size: 5
+      size: 10
     });
 
     world.addComponent(bullet, "acceleration", {

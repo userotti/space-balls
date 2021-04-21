@@ -21,16 +21,10 @@ const game = {
     io = _io;
 
     world.on("entity-removed", function(entity) {
-      console.log("Goodbye ID " + entity.uuid);
-      
-      
       if (entity.destroyed){
         const newPlayerEntity = entityCreator.createPlayer(world, entity.details.name);
-        newPlayerEntity.uuid = entity.uuid;
-        game.linkUserIdWithConnectionId(newPlayerEntity.uuid, entity.socketConnection.connectionId);
+        game.linkUserIdWithConnectionId(newPlayerEntity.uuid, entity.socketConnection.id);
       }
-
-
     });
 
     entityCreator.createPlanet(world, 'Dawn', {
@@ -107,8 +101,8 @@ const game = {
   },
 
   chat: (data)=>{
-    const {userId, message} = data;
-    const userChatting = world.findById(userId);
+    const {connectionId, message} = data;
+    const userChatting = game.getPlayerByConnectionId(connectionId);
     if (userChatting){
       io.emit('message', {
         message: `${userChatting.details.name}: ${message}`
@@ -116,9 +110,10 @@ const game = {
     }
   },
 
-  fire: (message)=>{
-    const {userId, vector} = message;
-    const userFiringBullet = world.findById(userId);
+  fire: (data)=>{
+    const {connectionId, vector} = data;
+    const userFiringBullet = game.getPlayerByConnectionId(connectionId);
+  
     if (userFiringBullet){
 
       io.emit('message', {
@@ -127,7 +122,7 @@ const game = {
 
       entityCreator.createBullet(world, {
         "details": {
-          player_uuid: userFiringBullet.uuid,
+          player_socket_connection_id: userFiringBullet.socketConnection.id,
           name: `${userFiringBullet.details.name}'s bullet`,
         },
         "position": {
@@ -135,8 +130,8 @@ const game = {
           y: userFiringBullet.position.y,
         },
         "velocity": {
-          x: vector.x / 20,
-          y: vector.y / 20,
+          x: vector.x / 10,
+          y: vector.y / 10,
         }
       });
     }

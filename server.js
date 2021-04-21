@@ -61,12 +61,17 @@ io.on('connection', (socket) => {
     }
   });
   
-  socket.on('fire', (message) => {
-    game.fire(message);
+  socket.on('fire', (data) => {
+    for (let connectionId of socket.rooms.keys()) {
+      game.fire({connectionId, ...data});
+    }
+    
   });
 
   socket.on('chat', (data) => {
-    game.chat(data);
+    for (let connectionId of socket.rooms.keys()) {
+      game.chat({connectionId, ...data});
+    }
   });
 
 });
