@@ -12,19 +12,51 @@ var world = new World();
 var users = [];
 var io;
 
-module.exports = {
+
+
+const game = {
 
   gameInit: (_io)=>{
     
     io = _io;
 
     world.on("entity-removed", function(entity) {
-      return console.log("Goodbye ID " + entity.uuid);
+      console.log("Goodbye ID " + entity.uuid);
+      
+      
+      if (entity.destroyed){
+        const newPlayerEntity = entityCreator.createPlayer(world, entity.details.name);
+        newPlayerEntity.uuid = entity.uuid;
+        game.linkUserIdWithConnectionId(newPlayerEntity.uuid, entity.socketConnection.connectionId);
+      }
 
 
     });
 
-    entityCreator.createPlanet(world, 'Dawn')
+    entityCreator.createPlanet(world, 'Dawn', {
+      position: {
+        x: 200,
+        y: 200
+      },
+      
+      charge: {
+        value: 100,
+      }
+    })
+    entityCreator.createPlanet(world, 'Tangent', {
+      position: {
+        x: 500,
+        y: 200
+      },
+      visual: {
+        shape: "circle",
+        color: "red",
+        size: Math.random()*20 + 20
+      },
+      charge: {
+        value: -70,
+      }
+    })
     
   },
 
@@ -95,6 +127,7 @@ module.exports = {
 
       entityCreator.createBullet(world, {
         "details": {
+          player_uuid: userFiringBullet.uuid,
           name: `${userFiringBullet.details.name}'s bullet`,
         },
         "position": {
@@ -110,3 +143,5 @@ module.exports = {
   }
 
 }
+
+module.exports = game;

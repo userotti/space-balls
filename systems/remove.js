@@ -5,7 +5,7 @@ module.exports = (world)=>{
 
   let bullets =  world.find(['position', 'bullet']);
   for (entity of bullets){
-    if (Math.sqrt(Math.pow(entity.position.x, 2) + Math.pow(entity.position.y, 2)) > 1000){
+    if (Math.sqrt(Math.pow(entity.position.x, 2) + Math.pow(entity.position.y, 2)) > 2000){
       world.removeEntity(entity);
     }
 

@@ -2,8 +2,8 @@ module.exports = {
   createPlayer: (world, username)=>{
     var player = world.createEntity();
     world.addComponent(player, "position", {
-      x: Math.random()*100-Math.random()*100 + 220,
-      y: Math.random()*100-Math.random()*100 + 240,
+      x: Math.random()*1000-Math.random()*1000 + 220,
+      y: Math.random()*1000-Math.random()*1000 + 240,
     });
 
     world.addComponent(player, "velocity", {
@@ -19,6 +19,7 @@ module.exports = {
 
     world.addComponent(player, "details", {
       name: username,
+      score: 0,
     });
 
     world.addComponent(player, "player", true);
@@ -50,35 +51,42 @@ module.exports = {
 
     world.addComponent(bullet, "bullet", true);
 
+    const startCycles = 200;
     world.addComponent(bullet, "countdown", {
-      cycles: 200
+      start_cycles: startCycles,
+      cycles: startCycles
     });
 
 
   },
 
-  createPlanet: (world, planetName)=>{
+  createPlanet: (world, planetName, components)=>{
     var planet = world.createEntity();
 
-    world.addComponent(planet, "position", {
-      x: Math.random()*100-Math.random()*100 + 400,
-      y: Math.random()*100-Math.random()*100 + 300,
-    });
+    for (componentName of Object.keys(components)){
+      world.addComponent(planet, componentName, components[componentName]);
+    }
 
-    world.addComponent(planet, "velocity", {
-      x: 0,
-      y: 0,
-    });
+    if (!components["position"]) {
+      world.addComponent(planet, "position", {
+        x: Math.random()*100-Math.random()*100 + 400,
+        y: Math.random()*100-Math.random()*100 + 300,
+      });
+    }
 
-    world.addComponent(planet, "visual", {
-      shape: "circle",
-      color: "green",
-      size: Math.random()*20 + 50
-    });
+    if (!components["visual"]) {
+      world.addComponent(planet, "visual", {
+        shape: "circle",
+        color: "green",
+        size: Math.random()*20 + 50
+      });
+    }
 
-    world.addComponent(planet, "charge", {
-      value: 100
-    });
+    if (!components["charge"]) {
+      world.addComponent(planet, "charge", {
+        value: 100
+      });
+    }
 
     world.addComponent(planet, "planet", true);
 

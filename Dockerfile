@@ -6,6 +6,8 @@ COPY package.json .
 
 RUN npm i --quiet
 
+EXPOSE 8001
+
 COPY . .
 
 CMD ["node", "server.js"]

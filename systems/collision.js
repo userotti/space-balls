@@ -24,25 +24,39 @@ module.exports = (io, world, delta)=>{
     }  
   }
 
-  // for (bullet of bullets){
-  //   for (player of players){
+  for (bullet of bullets){
+    for (player of players){
 
-  //     const positionDifference = {
-  //       x: player.position.x - bullet.position.x,
-  //       y: player.position.y - bullet.position.y
-  //     }
+      const positionDifference = {
+        x: player.position.x - bullet.position.x,
+        y: player.position.y - bullet.position.y
+      }
 
-  //     if (positionDifference.x < player.visual.size+bullet.
+      if (Math.abs(positionDifference.x*2) < player.visual.size+bullet.visual.size && Math.abs(positionDifference.y*2) < player.visual.size+bullet.visual.size){
+        if (bullet.countdown.start_cycles - bullet.countdown.cycles > 5 ){
 
-  //     if (dist < (planet.visual.size + bullet.visual.size)){
-  //       world.removeEntity(bullet);
-  //       io.emit('bullet_planet_explosion', {
-  //         position: bullet.position
-  //       });
-  //     }
-      
-  //   }  
-  // }
+          
+
+          world.removeEntity(bullet);
+          world.addComponent(player, "destroyed", {
+            destroyed_by_uuid: bullet.details.player_uuid
+          })
+
+          world.removeEntity(player);
+
+          const bulletPlayer = world.findById(bullet.details.player_uuid);
+          if (bulletPlayer){
+            bulletPlayer.details.score = bulletPlayer.details.score + 1; 
+          }
+          
+          io.emit('bullet_player_explosion', {
+            position: bullet.position
+          });
+        }
+      }
+            
+    }  
+  }
   
 
 }

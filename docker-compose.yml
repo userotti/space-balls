@@ -5,6 +5,6 @@ services:
     working_dir: /usr/app
     volumes:
       - ./:/usr/app
-    command: nodemon server.js
+    command: npx nodemon server.js
     ports:
       - 8001:8001
