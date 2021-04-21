@@ -55,20 +55,17 @@ io.on('connection', (socket) => {
 
   socket.on('disconnecting', () => {
     for (let connectionId of socket.rooms.keys()) {
-      if (!!game.isLinkedToActivePlayer(connectionId)){
+      if (!!game.getPlayerByConnectionId(connectionId)){
         game.removeUserWithConnectionId(connectionId)  
       }
     }
   });
-
   
   socket.on('fire', (message) => {
-    console.log('Fire!: ', message);
     game.fire(message);
   });
 
   socket.on('chat', (data) => {
-    console.log('data!: ', data);
     game.chat(data);
   });
 

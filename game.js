@@ -2,6 +2,8 @@ const World = require('index-ecs').World;
 const broadcast = require('./systems/broadcast');
 const physics = require('./systems/physics');
 const remove = require('./systems/remove');
+const collision = require('./systems/collision');
+
 const entityCreator = require('./entities');
 
 
@@ -15,28 +17,18 @@ module.exports = {
   gameInit: (_io)=>{
     
     io = _io;
+
     world.on("entity-removed", function(entity) {
       return console.log("Goodbye ID " + entity.uuid);
+
+
     });
 
-    io.on('fire', (socket) => {
-      entityCreator.createBullet(world, {
-        "position": {
-          x: 220,
-          y: 240,
-        },
-        "velocity": {
-          x: 0,
-          y: 0,
-        }
-      });
-    });
-
-    entityCreator.createPlanet(world, 'Andromedon')
+    entityCreator.createPlanet(world, 'Dawn')
     
   },
 
-  isLinkedToActivePlayer: (connectionId) => {
+  getPlayerByConnectionId: (connectionId) => {
     return world.find(['player']).find((player)=>{
       return player.socketConnection.id == connectionId
     })
@@ -60,6 +52,7 @@ module.exports = {
     remove(world);
     broadcast(io, world, delta);
     physics(world, delta);
+    collision(io, world, delta);
   },
 
   addUser: (username)=>{
@@ -71,19 +64,14 @@ module.exports = {
   },
 
   removeUserWithConnectionId: (connectionId)=>{
-    
     for (player of world.find(['player'])) {
       if (player.socketConnection && connectionId && player.socketConnection.id == connectionId){
         world.removeEntity(player);
-        
         io.emit('message', {
           message: `${player.details.name} disconnected.`
         })
-
       }
     }
-
-    
   },
 
   chat: (data)=>{

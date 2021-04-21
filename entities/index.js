@@ -51,7 +51,7 @@ module.exports = {
     world.addComponent(bullet, "bullet", true);
 
     world.addComponent(bullet, "countdown", {
-      cycles: 100
+      cycles: 200
     });
 
 
