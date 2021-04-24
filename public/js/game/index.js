@@ -1,4 +1,4 @@
-const canvasWidth = 800;
+const canvasWidth = 600;
 const canvasHeight = 600;
 
 const queryParams = new URLSearchParams(window.location.search);
@@ -6,19 +6,14 @@ const currentUserId = queryParams.get("userId");
 if (currentUserId){
   document.getElementById("join_button").style="display: none;";
   document.getElementById("spectate_button").style="display: flex;";
-
-  
   
   const chatInputElement = document.getElementById("chat_input");
   chatInputElement.addEventListener('keydown', (event)=>{
     
     if (currentUserId && event.key == "Enter") {
-      console.log("gooi chat", chatInputElement.value);
       socket.emit('chat', {
-        userId: currentUserId,
         message: chatInputElement.value,
       });
-
       chatInputElement.value = '';
     }
     
@@ -54,6 +49,9 @@ var pan = {
 
 var entities = [];
 var messages = [];
+
+var lockOnPlayerId = true;
+var followLastBullet = false;
 
 socket.on('state', function(event) {
   entities = event.entities
@@ -135,20 +133,37 @@ document.getElementById("zoom_out").addEventListener("click", function(event) {
 });
 
 document.getElementById("pan_up").addEventListener("click", function(event) {
-  pan.y += 50;
-  console.log("up")
+  pan.y += 150;
+  lockOnPlayerId = false;
+  followLastBullet = false;
 });
 
 document.getElementById("pan_down").addEventListener("click", function(event) {
-  pan.y -= 50;
+  pan.y -= 150;
+  lockOnPlayerId = false;
+  followLastBullet = false;
 });
 
 document.getElementById("pan_left").addEventListener("click", function(event) {
-  pan.x += 50;
+  pan.x += 150;
+  lockOnPlayerId = false;
+  followLastBullet = false;
 });
 
 document.getElementById("pan_right").addEventListener("click", function(event) {
-  pan.x -= 50;
+  pan.x -= 150;
+  lockOnPlayerId = false;
+  followLastBullet = false;
+});
+
+document.getElementById("home").addEventListener("click", function(event) {
+  lockOnPlayerId = true;
+  followLastBullet = false;
+});
+
+document.getElementById("follow_bullet").addEventListener("click", function(event) {
+  followLastBullet = true;
+  lockOnPlayerId = false;
 });
 
 
@@ -156,7 +171,33 @@ setInterval(()=>{
 
   ctx.clearRect(0,0,canvasWidth,canvasHeight);
 
-  
+  const currentPlayer = entities.find((entity)=>{
+    return currentUserId == entity.uuid
+  });
+
+  if (lockOnPlayerId){
+    
+
+    if (currentPlayer){
+      pan = {
+        x: currentPlayer.position.x * -1 +(canvasWidth/2),
+        y: currentPlayer.position.y * -1 +(canvasHeight/2),
+      }
+    }
+  }
+
+  if (followLastBullet){
+    const bullets = entities.filter((entity)=>{
+      return (entity.details && currentPlayer.socketConnection && entity.details.player_socket_connection_id == currentPlayer.socketConnection.id);
+    });
+
+    if (bullets && bullets[bullets.length-1]){
+      pan = {
+        x: bullets[bullets.length-1].position.x * -1 +(canvasWidth/2),
+        y: bullets[bullets.length-1].position.y * -1 +(canvasHeight/2),
+      }
+    }
+  }
   
 
   for (entity of entities){
@@ -199,19 +240,6 @@ setInterval(()=>{
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   
-  //Remove message that are done with the delay.
-  // messages = messages.filter((message, index)=>{
-  //   if (message.delay > 0) {
-  //     message.delay = message.delay - 50;
-  //     ctx.font = "10px Arial";
-  //     ctx.fillStyle = "white";
-  //     ctx.fillText(message.text, 20, canvasHeight - (index * 15) - 20);
-  //   } else {
-  //     message.delay = 0
-  //   }
-  //   return !!message.delay
-  // })
-
 
   if (aiming.active){
     ctx.strokeStyle = "white";
