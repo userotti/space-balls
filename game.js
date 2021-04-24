@@ -20,43 +20,54 @@ const game = {
     
     io = _io;
 
+    
+
     world.on("entity-removed", function(entity) {
       if (entity.destroyed){
-        const newPlayerEntity = entityCreator.createPlayer(world, entity.details.name);
+        const newPlayerEntity = entityCreator.createPlayerAtCalculatedPosition(world, entity.details.name);
         game.linkUserIdWithConnectionId(newPlayerEntity.uuid, entity.socketConnection.id);
       }
     });
 
+    
     entityCreator.createPlanet(world, 'Dawn', {
-      position: {
-        x: 200,
-        y: 200
-      },
-      
       charge: {
-        value: 100,
+        value: 120,
       }
     })
-    entityCreator.createPlanet(world, 'Tangent', {
-      position: {
-        x: 500,
-        y: 200
-      },
+    entityCreator.createPlanet(world, 'V-NEXT', {
       visual: {
         shape: "circle",
-        color: "red",
-        size: Math.random()*20 + 20
+        color: "green",
+        size: Math.random()*20 + 50
       },
       charge: {
-        value: -70,
+        value: 80,
       }
     })
+
+    entityCreator.createPlanet(world, 'Stack Deploy', {
+      visual: {
+        shape: "circle",
+        color: "green",
+        size: Math.random()*20 + 40
+      },
+      charge: {
+        value: 80,
+      }
+    })
+
     
   },
 
   getPlayerByConnectionId: (connectionId) => {
     return world.find(['player']).find((player)=>{
-      return player.socketConnection.id == connectionId
+      if (player.socketConnection){
+        return player.socketConnection.id == connectionId
+      } else {
+        return false;
+      }
+      
     })
   },
 
@@ -82,7 +93,7 @@ const game = {
   },
 
   addUser: (username)=>{
-    const playerEntity = entityCreator.createPlayer(world, username);
+    const playerEntity = entityCreator.createPlayerAtCalculatedPosition(world, username);
     io.emit('message', {
       message: `${playerEntity.details.name} joined the solar system.`,
     })

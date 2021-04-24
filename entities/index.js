@@ -1,10 +1,45 @@
+const randomCircleLocaltion = (radiusContainer)=>{
+  let angle = (Math.PI*2) * Math.random();
+  let radius = Math.random();
+  radius = Math.sqrt(radius) * radiusContainer;
+  return {
+    x: radius * Math.cos(angle), 
+    y: radius * Math.sin(angle), 
+  }
+}
+
+const toCloseToPosition = (position, other_position, padding)=>{
+  let distance = Math.sqrt(Math.pow(position.x - other_position.x, 2) + Math.pow(position.y - other_position.y, 2))
+  return distance < padding
+}
+
+const toCloseToPositions = (position, other_positions, padding)=>{
+  return other_positions.reduce((total, other)=>{
+    return total || toCloseToPosition(position, other, padding);
+  }, false)
+}
+
 module.exports = {
-  createPlayer: (world, username)=>{
+  createPlayerAtCalculatedPosition: (world, username)=>{
     var player = world.createEntity();
-    world.addComponent(player, "position", {
-      x: Math.random()*1000-Math.random()*1000 + 220,
-      y: Math.random()*1000-Math.random()*1000 + 240,
-    });
+
+
+
+    
+    let placementRadius = 1500;
+    let minimumDistanceToPlanetSurfice = 300;
+    let minimumDistanceToPlayer = 200;
+    let playerPosition = randomCircleLocaltion(placementRadius);
+
+    while(toCloseToPositions(playerPosition, world.find(['planet']).map((planet)=>{
+      return planet.position
+    }), minimumDistanceToPlanetSurfice) || toCloseToPositions(playerPosition, world.find(['player']).map((planet)=>{
+      return planet.position
+    }), minimumDistanceToPlayer)){
+      playerPosition = randomCircleLocaltion(placementRadius);
+    }
+    
+    world.addComponent(player, "position", playerPosition);
 
     world.addComponent(player, "velocity", {
       x: 0,
@@ -68,10 +103,18 @@ module.exports = {
     }
 
     if (!components["position"]) {
-      world.addComponent(planet, "position", {
-        x: Math.random()*100-Math.random()*100 + 400,
-        y: Math.random()*100-Math.random()*100 + 300,
-      });
+      
+      let placementRadius = 1000;
+      let minimumDistanceToPlanetSurfice = 150;
+      let planetPosition = randomCircleLocaltion(placementRadius);
+      
+      while(toCloseToPositions(planetPosition, world.find(['planet']).map((planet)=>{
+        return planet.position
+      }), minimumDistanceToPlanetSurfice)){
+        planetPosition = randomCircleLocaltion(placementRadius);
+      }
+      
+      world.addComponent(planet, "position", planetPosition);
     }
 
     if (!components["visual"]) {
