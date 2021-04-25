@@ -68,6 +68,19 @@ socket.on('message', function(event) {
   
 });
 
+socket.on('score_update', function(event) {
+  const scoreBox = document.getElementById("scoreboard");
+  while (scoreBox.firstChild) {
+    scoreBox.removeChild(scoreBox.firstChild);
+  }
+  for (const [index,value] of event.scoreboard_items.entries()){
+    scoreTag = document.createElement('span');
+    scoreTag.innerText  = `${index+1}. ${value}`;
+    scoreTag.style = `font-size: 12px; color: #999`;
+    scoreBox.appendChild(scoreTag);
+  }
+})
+
 const aiming = {
   mousemove: {
     x: 0,

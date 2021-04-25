@@ -36,20 +36,33 @@ module.exports = (io, world, delta)=>{
         if (bullet.countdown.start_cycles - bullet.countdown.cycles > 5 ){
 
           world.addComponent(bullet, "destroyed", {
-            fired_by_player_uuid: bullet.details.currentPlayerUuid,
+            fired_by_player_uuid: bullet.details.playerUuid,
             killed_player_uuid: player.uuid
           })
 
           world.removeEntity(bullet);
+          console.log("bullet.details: ", bullet.details);
 
-          const bulletPlayer = world.findById(bullet.details.currentPlayerUuid)
+          console.log("bulletPlayerId: ", bullet.details.playerUuid);
+
+          const bulletPlayer = world.findById(bullet.details.playerUuid)
+          console.log("bulletPlayer: ", bulletPlayer);
 
           if (bulletPlayer){
+            
             if (bulletPlayer.uuid != player.uuid){
               bulletPlayer.details.score = bulletPlayer.details.score + 1; 
             } else {
               player.details.score = player.details.score - 1;
             }
+
+            io.emit('score_update', {
+              scoreboard_items: world.find(['player']).sort((p1,p2)=>{
+                return p2.details.score - p1.details.score
+              }).map((player)=>{
+                return `${player.details.name}: ${player.details.score}`;
+              })
+            });
             
           }
           

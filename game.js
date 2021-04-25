@@ -105,6 +105,16 @@ const game = {
     return playerEntity;
   },
 
+  sendScoreUpdate: ()=>{
+    io.emit('score_update', {
+      scoreboard_items: world.find(['player']).sort((p1,p2)=>{
+        return p2.details.score - p1.details.score
+      }).map((player)=>{
+        return `${player.details.name}: ${player.details.score}`;
+      })
+    });
+  },
+
   removeUserWithConnectionId: (connectionId)=>{
     for (player of world.find(['player'])) {
       if (player.socketConnection && connectionId && player.socketConnection.id == connectionId){
