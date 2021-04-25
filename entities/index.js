@@ -20,21 +20,41 @@ const toCloseToPositions = (position, other_positions, padding)=>{
 }
 
 module.exports = {
-  createPlayerAtCalculatedPosition: (world, username)=>{
-    var player = world.createEntity();
-
-
-
+  createOrReplacePlayerAtCalculatedPosition: (world, username, existingPlayer)=>{
+    
+    var player;
+    if (existingPlayer){
+      world.removeComponent(existingPlayer, "position");
+      world.removeComponent(existingPlayer, "velocity");
+      world.removeComponent(existingPlayer, "destroyed");
+      player = existingPlayer;
+    } else {
+      player =  world.createEntity();
+      world.addComponent(player, "visual", {
+        shape: "square",
+        color: "blue",
+        size: 40
+      });
+  
+      world.addComponent(player, "details", {
+        name: username,
+        score: 0,
+      });
+  
+      world.addComponent(player, "player", true);
+    }
     
     let placementRadius = 1500;
     let minimumDistanceToPlanetSurfice = 300;
     let minimumDistanceToPlayer = 200;
     let playerPosition = randomCircleLocaltion(placementRadius);
+    console.log("playerPosition: ", playerPosition);
 
     while(toCloseToPositions(playerPosition, world.find(['planet']).map((planet)=>{
+      console.log("planet: ", planet);
       return planet.position
-    }), minimumDistanceToPlanetSurfice) || toCloseToPositions(playerPosition, world.find(['player']).map((planet)=>{
-      return planet.position
+    }), minimumDistanceToPlanetSurfice) || toCloseToPositions(playerPosition, world.find(['player', 'position']).map((otherPlayer)=>{
+      return otherPlayer.position
     }), minimumDistanceToPlayer)){
       playerPosition = randomCircleLocaltion(placementRadius);
     }
@@ -45,19 +65,6 @@ module.exports = {
       x: 0,
       y: 0,
     });
-
-    world.addComponent(player, "visual", {
-      shape: "square",
-      color: "blue",
-      size: 40
-    });
-
-    world.addComponent(player, "details", {
-      name: username,
-      score: 0,
-    });
-
-    world.addComponent(player, "player", true);
 
     return player;
   },

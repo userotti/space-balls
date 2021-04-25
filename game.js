@@ -23,14 +23,19 @@ const game = {
     
 
     world.on("entity-removed", function(entity) {
-      if (entity.destroyed){
-        const newPlayerEntity = entityCreator.createPlayerAtCalculatedPosition(world, entity.details.name);
-        game.linkUserIdWithConnectionId(newPlayerEntity.uuid, entity.socketConnection.id);
+      if (entity.bullet && entity.destroyed){
+        const killedPlayer = world.findById(entity.destroyed.killed_player_uuid);
+        entityCreator.createOrReplacePlayerAtCalculatedPosition(world, killedPlayer.details.name, killedPlayer);
       }
     });
 
     
     entityCreator.createPlanet(world, 'Dawn', {
+      visual: {
+        shape: "circle",
+        color: "green",
+        size: Math.random()*20 + 100
+      },
       charge: {
         value: 120,
       }
@@ -39,7 +44,7 @@ const game = {
       visual: {
         shape: "circle",
         color: "green",
-        size: Math.random()*20 + 50
+        size: Math.random()*20 + 70
       },
       charge: {
         value: 80,
@@ -50,7 +55,7 @@ const game = {
       visual: {
         shape: "circle",
         color: "green",
-        size: Math.random()*20 + 40
+        size: Math.random()*20 + 80
       },
       charge: {
         value: 80,
@@ -93,7 +98,7 @@ const game = {
   },
 
   addUser: (username)=>{
-    const playerEntity = entityCreator.createPlayerAtCalculatedPosition(world, username);
+    const playerEntity = entityCreator.createOrReplacePlayerAtCalculatedPosition(world, username);
     io.emit('message', {
       message: `${playerEntity.details.name} joined the solar system.`,
     })
@@ -133,7 +138,7 @@ const game = {
 
       entityCreator.createBullet(world, {
         "details": {
-          player_socket_connection_id: userFiringBullet.socketConnection.id,
+          playerUuid: userFiringBullet.uuid,
           name: `${userFiringBullet.details.name}'s bullet`,
         },
         "position": {

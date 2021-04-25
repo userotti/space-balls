@@ -2,15 +2,15 @@ const canvasWidth = 600;
 const canvasHeight = 600;
 
 const queryParams = new URLSearchParams(window.location.search);
-const currentUserId = queryParams.get("userId");
-if (currentUserId){
+const currentPlayerUuid = queryParams.get("userId");
+if (currentPlayerUuid){
   document.getElementById("join_button").style="display: none;";
   document.getElementById("spectate_button").style="display: flex;";
   
   const chatInputElement = document.getElementById("chat_input");
   chatInputElement.addEventListener('keydown', (event)=>{
     
-    if (currentUserId && event.key == "Enter") {
+    if (currentPlayerUuid && event.key == "Enter") {
       socket.emit('chat', {
         message: chatInputElement.value,
       });
@@ -105,10 +105,8 @@ document.getElementById("canvas").addEventListener("mouseup", function(event) {
   aiming.active = false;
 
   const params = new URLSearchParams(window.location.search);
-  const userId = params.get("userId");
-
+  
   socket.emit('fire', {
-    userId: userId,
     vector: {
       x: aiming.mousedown.x - aiming.mouseup.x,
       y: aiming.mousedown.y - aiming.mouseup.y,
@@ -172,7 +170,7 @@ setInterval(()=>{
   ctx.clearRect(0,0,canvasWidth,canvasHeight);
 
   const currentPlayer = entities.find((entity)=>{
-    return currentUserId == entity.uuid
+    return currentPlayerUuid == entity.uuid
   });
 
   if (lockOnPlayerId){
@@ -188,7 +186,9 @@ setInterval(()=>{
 
   if (followLastBullet){
     const bullets = entities.filter((entity)=>{
-      return (entity.details && currentPlayer.socketConnection && entity.details.player_socket_connection_id == currentPlayer.socketConnection.id);
+      return (entity.details && currentPlayer && currentPlayer.socketConnection && entity.details.playerUuid == currentPlayerUuid);
+    }).sort((b1, b2)=>{
+      return b1.countdown.cycles - b2.countdown.cycles 
     });
 
     if (bullets && bullets[bullets.length-1]){
