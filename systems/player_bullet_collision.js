@@ -1,4 +1,4 @@
-module.exports = (io, world, delta)=>{
+module.exports = (world, delta)=>{
   const bullets =  world.find(['bullet']);
   const players =  world.find(['player']);
   
@@ -30,19 +30,12 @@ module.exports = (io, world, delta)=>{
               player.details.score = player.details.score - 1;
             }
 
-            io.emit('score_update', {
-              scoreboard_items: world.find(['player']).sort((p1,p2)=>{
-                return p2.details.score - p1.details.score
-              }).map((player)=>{
-                return `${player.details.name}: ${player.details.score}`;
-              })
-            });
+            world.emit('score_update');
             
           }
+
+          world.emit('player_bullet_collistion_event', player, bullet);
           
-          io.emit('bullet_player_explosion', {
-            position: bullet.position
-          });
         }
       }
             

@@ -23,10 +23,10 @@ module.exports = {
   createOrReplacePlayerAtCalculatedPosition: (world, username, existingPlayer)=>{
     
     var player;
+    console.log("createOrReplacePlayerAtCalculatedPosition: existingPlayer", existingPlayer);
     if (existingPlayer){
       world.removeComponent(existingPlayer, "position");
       world.removeComponent(existingPlayer, "velocity");
-      world.removeComponent(existingPlayer, "destroyed");
       player = existingPlayer;
     } else {
       player =  world.createEntity();
@@ -48,10 +48,8 @@ module.exports = {
     let minimumDistanceToPlanetSurfice = 300;
     let minimumDistanceToPlayer = 200;
     let playerPosition = randomCircleLocaltion(placementRadius);
-    console.log("playerPosition: ", playerPosition);
-
+    
     while(toCloseToPositions(playerPosition, world.find(['planet']).map((planet)=>{
-      console.log("planet: ", planet);
       return planet.position
     }), minimumDistanceToPlanetSurfice) || toCloseToPositions(playerPosition, world.find(['player', 'position']).map((otherPlayer)=>{
       return otherPlayer.position
@@ -93,10 +91,9 @@ module.exports = {
 
     world.addComponent(bullet, "bullet", true);
 
-    const startCycles = 200;
     world.addComponent(bullet, "countdown", {
-      start_cycles: startCycles,
-      cycles: startCycles
+      start_cycles: 200,
+      cycles: 200
     });
 
 
@@ -143,6 +140,38 @@ module.exports = {
     world.addComponent(planet, "details", {
       name: planetName,
     });
+  },
+
+  createExplosion: (world, position, power, blastOriginatorPlayerUuid)=>{
+    var explosion = world.createEntity();
+
+    world.addComponent(explosion,"details", {
+      blastOriginatorPlayerUuid: blastOriginatorPlayerUuid,
+    })
+
+    world.addComponent(explosion,"position", {
+      x: position.x,
+      y: position.y
+    })
+
+    world.addComponent(explosion, "countdown", {
+      start_cycles: 30,
+      cycles: 30
+    });
+
+    world.addComponent(explosion, "shockwave", {
+      radius: 0,
+      max_radius: power*5,
+      speed: 5
+    });
+
+    world.addComponent(explosion, "blast", {
+      radius: 0,
+      max_radius: power,
+      speed: 5,
+    });
+
+    
   },
 
 

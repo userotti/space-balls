@@ -214,7 +214,6 @@ setInterval(()=>{
   
 
   for (entity of entities){
-    ctx.fillStyle = entity.visual.color;
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.translate(canvasWidth/2, canvasHeight/2);
@@ -222,31 +221,48 @@ setInterval(()=>{
     ctx.translate(-(canvasWidth/2), -(canvasHeight/2));
     ctx.translate(pan.x, pan.y);
     ctx.translate(entity.position.x, entity.position.y);
-    
-      
 
-    if (entity.visual.shape == "square"){
-      ctx.fillRect(0-entity.visual.size/2, 0-entity.visual.size/2, entity.visual.size, entity.visual.size);
+    if (entity.visual) {
+      ctx.fillStyle = entity.visual.color;
+
+      if (entity.visual.shape == "square"){
+        ctx.fillRect(0-entity.visual.size/2, 0-entity.visual.size/2, entity.visual.size, entity.visual.size);
+      }
+
+      if (entity.visual.shape == "circle"){
+        ctx.beginPath();
+        ctx.arc(0, 0, entity.visual.size, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+
+      ctx.scale(1/zoom.x, 1/zoom.y);
+
+      ctx.fillStyle = entity.visual.color;
+      ctx.font = "10px Arial";
+      ctx.fillStyle = "white";
+
+      if (entity.countdown){
+        ctx.fillText(`${entity.details.name} ${entity.countdown.cycles}`, 0, 0 - 10);
+      } else {
+        ctx.fillText(entity.details.name, 0, 0 - 10);
+      }
     }
 
-    if (entity.visual.shape == "circle"){
+    if (entity.shockwave){
+      ctx.strokeStyle = "#fff";
+
       ctx.beginPath();
-      ctx.arc(0, 0, entity.visual.size, 0, 2 * Math.PI);
+      ctx.arc(0, 0, entity.shockwave.radius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    if (entity.blast){
+      ctx.fillStyle = "#ff0";
+
+      ctx.beginPath();
+      ctx.arc(0, 0, entity.blast.radius, 0, 2 * Math.PI);
       ctx.fill();
     }
-
-    ctx.scale(1/zoom.x, 1/zoom.y);
-
-    ctx.fillStyle = entity.visual.color;
-    ctx.font = "10px Arial";
-    ctx.fillStyle = "white";
-
-    if (entity.countdown){
-      ctx.fillText(`${entity.details.name} ${entity.countdown.cycles}`, 0, 0 - 10);
-    } else {
-      ctx.fillText(entity.details.name, 0, 0 - 10);
-    }
-    
     
   }
 

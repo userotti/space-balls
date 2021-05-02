@@ -5,6 +5,9 @@ const remove = require('./systems/remove');
 const bullet_planet_collision = require('./systems/bullet_planet_collision');
 const player_bullet_collision = require('./systems/player_bullet_collision');
 
+const player_blaster_collision = require('./systems/player_blaster_collision');
+const blast = require('./systems/blast');
+const shockwave = require('./systems/shockwave');
 
 const entityCreator = require('./entities');
 
@@ -25,11 +28,22 @@ const game = {
     
 
     world.on("entity-removed", function(entity) {
-      if (entity.bullet && entity.destroyed){
-        const killedPlayer = world.findById(entity.destroyed.killed_player_uuid);
-        entityCreator.createOrReplacePlayerAtCalculatedPosition(world, killedPlayer.details.name, killedPlayer);
-      }
+      
     });
+
+    world.on("player_bullet_collistion_event", function(killedPlayer, bullet){
+      entityCreator.createExplosion(world, killedPlayer.position, 100, bullet.destroyed.killed_player_uuid);
+      entityCreator.createOrReplacePlayerAtCalculatedPosition(world, killedPlayer.details.name, killedPlayer);
+    });
+
+    world.on("player_blaster_collistion_event", function(killedPlayer, blaster){
+      entityCreator.createExplosion(world, killedPlayer.position, 100, blaster.details.blastOriginatorPlayerUuid);
+      entityCreator.createOrReplacePlayerAtCalculatedPosition(world, killedPlayer.details.name, killedPlayer);
+    });
+
+    world.on("score_update", function(){
+      game.sendScoreUpdate();
+    })
 
     
     entityCreator.createPlanet(world, 'Dawn', {
@@ -96,8 +110,12 @@ const game = {
     remove(world);
     broadcast(io, world, delta);
     physics(world, delta);
-    player_bullet_collision(io, world, delta);
+    player_bullet_collision(world, delta);
     bullet_planet_collision(io, world, delta);
+    blast(world, delta);
+    shockwave(world, delta);
+    player_blaster_collision(world, delta);
+    
   },
 
   addUser: (username)=>{
@@ -141,8 +159,11 @@ const game = {
 
   fire: (data)=>{
     const {connectionId, vector} = data;
+
+    console.log("fire!: ", data);
     const userFiringBullet = game.getPlayerByConnectionId(connectionId);
-  
+    console.log("fire! userFiringBullet: ", userFiringBullet);
+
     if (userFiringBullet){
 
       io.emit('message', {
