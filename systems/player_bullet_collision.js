@@ -1,29 +1,7 @@
 module.exports = (io, world, delta)=>{
   const bullets =  world.find(['bullet']);
-  const planets =  world.find(['planet']);
   const players =  world.find(['player']);
   
-
-  for (bullet of bullets){
-    for (planet of planets){
-
-      const positionDifference = {
-        x: planet.position.x - bullet.position.x,
-        y: planet.position.y - bullet.position.y
-      }
-
-      const dist = Math.sqrt(Math.pow(positionDifference.x,2) + Math.pow(positionDifference.y,2));
-
-      if (dist < planet.visual.size + bullet.visual.size) {
-        world.removeEntity(bullet);
-        io.emit('bullet_planet_explosion', {
-          position: bullet.position
-        });
-      }
-      
-    }  
-  }
-
   for (bullet of bullets){
     for (player of players){
 
@@ -41,13 +19,9 @@ module.exports = (io, world, delta)=>{
           })
 
           world.removeEntity(bullet);
-          console.log("bullet.details: ", bullet.details);
-
-          console.log("bulletPlayerId: ", bullet.details.playerUuid);
-
+          
           const bulletPlayer = world.findById(bullet.details.playerUuid)
-          console.log("bulletPlayer: ", bulletPlayer);
-
+          
           if (bulletPlayer){
             
             if (bulletPlayer.uuid != player.uuid){

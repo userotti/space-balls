@@ -2,7 +2,9 @@ const World = require('index-ecs').World;
 const broadcast = require('./systems/broadcast');
 const physics = require('./systems/physics');
 const remove = require('./systems/remove');
-const collision = require('./systems/collision');
+const bullet_planet_collision = require('./systems/bullet_planet_collision');
+const player_bullet_collision = require('./systems/player_bullet_collision');
+
 
 const entityCreator = require('./entities');
 
@@ -94,7 +96,8 @@ const game = {
     remove(world);
     broadcast(io, world, delta);
     physics(world, delta);
-    collision(io, world, delta);
+    player_bullet_collision(io, world, delta);
+    bullet_planet_collision(io, world, delta);
   },
 
   addUser: (username)=>{
