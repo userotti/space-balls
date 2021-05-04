@@ -88,13 +88,6 @@ const game = {
       }
     })
 
-    for (let i = 0; i < 180; i++){
-      entityCreator.createOrReplacePlayerAtCalculatedPosition(world, "doos");
-    }
-    
-
-    
-
     
   },
 
