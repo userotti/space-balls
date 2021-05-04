@@ -9,13 +9,19 @@ module.exports = (world, delta)=>{
         x: player.position.x - blaster.position.x,
         y: player.position.y - blaster.position.y
       }
+      
 
-      if (Math.abs(positionDifference.x*2) < player.visual.size+bullet.visual.size && Math.abs(positionDifference.y*2) < player.visual.size+blaster.blast.radius){
+      if (Math.sqrt(Math.pow(positionDifference.x, 2) + Math.pow(positionDifference.y, 2)) < blaster.blast.radius){
+        console.log("collision!");
+        console.log("blaster.details.blastOriginatorPlayerUuid: ", blaster.details.blastOriginatorPlayerUuid);
         
+        
+
         const blastPlayer = world.findById(blaster.details.blastOriginatorPlayerUuid)
-        
+        console.log("blastPlayer: ", blastPlayer);
         if (blastPlayer){
           
+          console.log("blastPlayer: ", blastPlayer);
           if (blastPlayer.uuid != player.uuid){
             blastPlayer.details.score = blastPlayer.details.score + 1;
           } else {

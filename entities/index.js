@@ -23,7 +23,6 @@ module.exports = {
   createOrReplacePlayerAtCalculatedPosition: (world, username, existingPlayer)=>{
     
     var player;
-    console.log("createOrReplacePlayerAtCalculatedPosition: existingPlayer", existingPlayer);
     if (existingPlayer){
       world.removeComponent(existingPlayer, "position");
       world.removeComponent(existingPlayer, "velocity");
@@ -44,9 +43,9 @@ module.exports = {
       world.addComponent(player, "player", true);
     }
     
-    let placementRadius = 1500;
-    let minimumDistanceToPlanetSurfice = 300;
-    let minimumDistanceToPlayer = 200;
+    let placementRadius = 2500;
+    let minimumDistanceToPlanetSurfice = 700;
+    let minimumDistanceToPlayer = 150;
     let playerPosition = randomCircleLocaltion(placementRadius);
     
     while(toCloseToPositions(playerPosition, world.find(['planet']).map((planet)=>{
@@ -108,8 +107,8 @@ module.exports = {
 
     if (!components["position"]) {
       
-      let placementRadius = 1000;
-      let minimumDistanceToPlanetSurfice = 150;
+      let placementRadius = 2000;
+      let minimumDistanceToPlanetSurfice = 500;
       let planetPosition = randomCircleLocaltion(placementRadius);
       
       while(toCloseToPositions(planetPosition, world.find(['planet']).map((planet)=>{

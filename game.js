@@ -32,35 +32,45 @@ const game = {
     });
 
     world.on("player_bullet_collistion_event", function(killedPlayer, bullet){
-      entityCreator.createExplosion(world, killedPlayer.position, 100, bullet.destroyed.killed_player_uuid);
+      entityCreator.createExplosion(world, killedPlayer.position, 250, bullet.destroyed.fired_by_player_uuid);
       entityCreator.createOrReplacePlayerAtCalculatedPosition(world, killedPlayer.details.name, killedPlayer);
     });
 
     world.on("player_blaster_collistion_event", function(killedPlayer, blaster){
-      entityCreator.createExplosion(world, killedPlayer.position, 100, blaster.details.blastOriginatorPlayerUuid);
+      entityCreator.createExplosion(world, killedPlayer.position, 250, blaster.details.blastOriginatorPlayerUuid);
       entityCreator.createOrReplacePlayerAtCalculatedPosition(world, killedPlayer.details.name, killedPlayer);
     });
 
     world.on("score_update", function(){
       game.sendScoreUpdate();
     })
-
     
     entityCreator.createPlanet(world, 'Dawn', {
       visual: {
         shape: "circle",
         color: "green",
-        size: Math.random()*20 + 100
+        size: 150
       },
       charge: {
         value: 120,
       }
     })
-    entityCreator.createPlanet(world, 'V-NEXT', {
+
+    entityCreator.createPlanet(world, 'v-next', {
       visual: {
         shape: "circle",
         color: "green",
-        size: Math.random()*20 + 70
+        size: 90
+      },
+      charge: {
+        value: 80,
+      }
+    })
+    entityCreator.createPlanet(world, 'Indie Galaxy', {
+      visual: {
+        shape: "circle",
+        color: "green",
+        size: 170
       },
       charge: {
         value: 80,
@@ -71,12 +81,19 @@ const game = {
       visual: {
         shape: "circle",
         color: "green",
-        size: Math.random()*20 + 80
+        size: 80
       },
       charge: {
         value: 80,
       }
     })
+
+    for (let i = 0; i < 180; i++){
+      entityCreator.createOrReplacePlayerAtCalculatedPosition(world, "doos");
+    }
+    
+
+    
 
     
   },
@@ -167,7 +184,7 @@ const game = {
     if (userFiringBullet){
 
       io.emit('message', {
-        message: `shot FIRED by ${userFiringBullet.details.name}!`
+        message: `shot fired by ${userFiringBullet.details.name}!`
       })
 
       entityCreator.createBullet(world, {
