@@ -11,7 +11,7 @@ module.exports = (world, delta)=>{
       }
 
       if (Math.abs(positionDifference.x*2) < player.visual.size+bullet.visual.size && Math.abs(positionDifference.y*2) < player.visual.size+bullet.visual.size){
-        if (bullet.countdown.start_cycles - bullet.countdown.cycles > 5 ){
+        if (bullet.countdown.start_cycles - bullet.countdown.cycles > 10 ){
 
           world.addComponent(bullet, "destroyed", {
             fired_by_player_uuid: bullet.details.playerUuid,

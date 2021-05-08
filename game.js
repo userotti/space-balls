@@ -168,9 +168,20 @@ const game = {
   },
 
   fire: (data)=>{
-    const {connectionId, vector} = data;
+    let {connectionId, power, angle} = data;
 
     console.log("fire!: ", data);
+
+    power = Math.min(Math.max(power, 5), 30);
+    angle = Math.min(Math.max(angle, 0), 360);
+
+    velocity = {
+      x: Math.cos((angle / 180) * Math.PI) * power,
+      y: Math.sin((angle / 180) * Math.PI) * -power,
+    }
+
+    console.log("velocity: ", velocity);
+
     const userFiringBullet = game.getPlayerByConnectionId(connectionId);
     console.log("fire! userFiringBullet: ", userFiringBullet);
 
@@ -190,8 +201,8 @@ const game = {
           y: userFiringBullet.position.y,
         },
         "velocity": {
-          x: vector.x / 10,
-          y: vector.y / 10,
+          x: velocity.x,
+          y: velocity.y,
         }
       });
     }

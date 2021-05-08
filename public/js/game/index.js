@@ -98,6 +98,12 @@ const aiming = {
 }
 
 const shot = {
+  angle: {
+    value: 0
+  },
+  power: {
+    value: 0
+  },
   vector: {
     x: 0,
     y: 0
@@ -117,13 +123,63 @@ document.getElementById("canvas").addEventListener("mouseup", function(event) {
 
   aiming.active = false;
 
-  const params = new URLSearchParams(window.location.search);
+  shot.power = Math.sqrt(Math.pow(aiming.mousedown.y - aiming.mouseup.y, 2) + Math.pow(aiming.mousedown.x - aiming.mouseup.x, 2)) * 0.05
   
+  shot.angle = Math.atan2((aiming.mousedown.y - aiming.mouseup.y), -1 * (aiming.mousedown.x - aiming.mouseup.x));
+  shot.angle = ((shot.angle + Math.PI) * 180) / Math.PI
+
+  let powerInput = document.getElementById("power_input");
+  let angleInput = document.getElementById("angle_input");
+  
+  powerInput.value = shot.power
+  angleInput.value = shot.angle
+
+});
+
+document.getElementById("power_input").addEventListener("input", function(event) {
+  console.log("power_input");
+});
+
+document.getElementById("angle_input").addEventListener("input", function(event) {
+  console.log("angle_input");
+});
+
+
+document.getElementById("fire_button").addEventListener("click", function(event) {
+  
+
+  let powerInput = document.getElementById("power_input");
+  
+  if (!!Number(powerInput.value)){
+    shot.power = powerInput.value;
+
+    shot.power = Math.min(Math.max(shot.power, 5), 30);
+
+  } else {
+    shot.power = 5;
+  }
+  
+  powerInput.value = shot.power;
+
+  let angleInput = document.getElementById("angle_input");
+  
+  if (!!Number(angleInput.value)){
+    shot.angle = angleInput.value;
+  } else {
+    shot.angle = 0;
+  }
+  
+  angleInput.value = shot.angle;
+
+  
+  console.log("fire: ",  {
+    angle: shot.angle,
+    power: shot.power,
+  });
+
   socket.emit('fire', {
-    vector: {
-      x: aiming.mousedown.x - aiming.mouseup.x,
-      y: aiming.mousedown.y - aiming.mouseup.y,
-    }
+    angle: shot.angle,
+    power: shot.power,
   });
 });
 
@@ -147,34 +203,40 @@ document.getElementById("pan_up").addEventListener("click", function(event) {
   pan.y += 150;
   lockOnPlayerId = false;
   followLastBullet = false;
+  document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("pan_down").addEventListener("click", function(event) {
   pan.y -= 150;
   lockOnPlayerId = false;
   followLastBullet = false;
+  document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("pan_left").addEventListener("click", function(event) {
   pan.x += 150;
   lockOnPlayerId = false;
   followLastBullet = false;
+  document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("pan_right").addEventListener("click", function(event) {
   pan.x -= 150;
   lockOnPlayerId = false;
   followLastBullet = false;
+  document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("home").addEventListener("click", function(event) {
   lockOnPlayerId = true;
   followLastBullet = false;
+  document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("follow_bullet").addEventListener("click", function(event) {
   followLastBullet = true;
   lockOnPlayerId = false;
+  document.getElementById("follow_bullet").style = "color: white;"
 });
 
 
