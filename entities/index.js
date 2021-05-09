@@ -39,6 +39,12 @@ module.exports = {
         name: username,
         score: 0,
       });
+
+      world.addComponent(player, "cooldown", {
+        value: 0,
+        max: 100,
+        rate: 2,
+      });
   
       world.addComponent(player, "player", true);
     }
@@ -62,6 +68,8 @@ module.exports = {
       x: 0,
       y: 0,
     });
+
+    
 
     return player;
   },

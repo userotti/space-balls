@@ -291,6 +291,14 @@ setInterval(()=>{
         ctx.fillRect(0-entity.visual.size/2, 0-entity.visual.size/2, entity.visual.size, entity.visual.size);
       }
 
+      if (entity.cooldown){
+        ctx.beginPath();
+        ctx.arc(0,0,50,0,(2*Math.PI) * (entity.cooldown.value / entity.cooldown.max));
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = 'green';
+        ctx.stroke();
+      }
+
       if (entity.visual.shape == "circle"){
         ctx.beginPath();
         ctx.arc(0, 0, entity.visual.size, 0, 2 * Math.PI);
@@ -334,6 +342,7 @@ setInterval(()=>{
 
   if (aiming.active){
     ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(aiming.mousedown.x, aiming.mousedown.y);
     ctx.lineTo(aiming.mousemove.x, aiming.mousemove.y);

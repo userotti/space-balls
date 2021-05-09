@@ -8,6 +8,8 @@ const player_bullet_collision = require('./systems/player_bullet_collision');
 const player_blaster_collision = require('./systems/player_blaster_collision');
 const blast = require('./systems/blast');
 const shockwave = require('./systems/shockwave');
+const cooldown = require('./systems/cooldown');
+
 
 const entityCreator = require('./entities');
 
@@ -125,6 +127,8 @@ const game = {
     blast(world, delta);
     shockwave(world, delta);
     player_blaster_collision(world, delta);
+    cooldown(world, delta);
+    
     
   },
 
@@ -170,8 +174,6 @@ const game = {
   fire: (data)=>{
     let {connectionId, power, angle} = data;
 
-    console.log("fire!: ", data);
-
     power = Math.min(Math.max(power, 5), 30);
     angle = Math.min(Math.max(angle, 0), 360);
 
@@ -180,31 +182,38 @@ const game = {
       y: Math.sin((angle / 180) * Math.PI) * -power,
     }
 
-    console.log("velocity: ", velocity);
-
     const userFiringBullet = game.getPlayerByConnectionId(connectionId);
-    console.log("fire! userFiringBullet: ", userFiringBullet);
 
     if (userFiringBullet){
+      
+      
+      //Cooldown check
+      if (userFiringBullet.cooldown.value == userFiringBullet.cooldown.max){
+        
+        io.emit('message', {
+          message: `shot fired by ${userFiringBullet.details.name}!`
+        })
+  
+        entityCreator.createBullet(world, {
+          "details": {
+            playerUuid: userFiringBullet.uuid,
+            name: `${userFiringBullet.details.name}'s bullet`,
+          },
+          "position": {
+            x: userFiringBullet.position.x,
+            y: userFiringBullet.position.y,
+          },
+          "velocity": {
+            x: velocity.x,
+            y: velocity.y,
+          }
+        });
+      }
 
-      io.emit('message', {
-        message: `shot fired by ${userFiringBullet.details.name}!`
-      })
-
-      entityCreator.createBullet(world, {
-        "details": {
-          playerUuid: userFiringBullet.uuid,
-          name: `${userFiringBullet.details.name}'s bullet`,
-        },
-        "position": {
-          x: userFiringBullet.position.x,
-          y: userFiringBullet.position.y,
-        },
-        "velocity": {
-          x: velocity.x,
-          y: velocity.y,
-        }
-      });
+      //Reset cooldown anyway
+      userFiringBullet.cooldown.value = 0;
+      
+      
     }
   }
 
