@@ -43,7 +43,7 @@ module.exports = {
       world.addComponent(player, "cooldown", {
         value: 0,
         max: 100,
-        rate: 2,
+        rate: 1.2,
       });
   
       world.addComponent(player, "player", true);

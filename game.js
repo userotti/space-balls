@@ -90,6 +90,8 @@ const game = {
       }
     })
 
+    entityCreator.createOrReplacePlayerAtCalculatedPosition(world, "Target Practice");
+
     
   },
 

@@ -26,7 +26,12 @@ if (currentPlayerUuid){
 }
 
 
-
+function getPointAtRadius(angleDegrees, radius){
+  return {
+    x: radius*Math.cos(-Math.PI * (angleDegrees/180)),
+    y: radius*Math.sin(-Math.PI * (angleDegrees/180))
+  };
+}
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
@@ -98,12 +103,10 @@ const aiming = {
 }
 
 const shot = {
-  angle: {
-    value: 0
-  },
-  power: {
-    value: 0
-  },
+  maxPower: 30,
+  minPower: 5,
+  angle: 45,
+  power: 5,
   vector: {
     x: 0,
     y: 0
@@ -137,11 +140,18 @@ document.getElementById("canvas").addEventListener("mouseup", function(event) {
 });
 
 document.getElementById("power_input").addEventListener("input", function(event) {
-  console.log("power_input");
+  let powerInput = document.getElementById("power_input");
+  if (!!Number(powerInput.value) || Number(powerInput.value) == 0){
+    shot.power = powerInput.value;
+    shot.power = Math.min(Math.max(shot.power, shot.minPower), shot.maxPower);
+  }
 });
 
 document.getElementById("angle_input").addEventListener("input", function(event) {
-  console.log("angle_input");
+  let angleInput = document.getElementById("angle_input");
+  if (!!Number(angleInput.value) || Number(angleInput.value) == 0){
+    shot.angle = angleInput.value;
+  }
 });
 
 
@@ -153,7 +163,7 @@ document.getElementById("fire_button").addEventListener("click", function(event)
   if (!!Number(powerInput.value)){
     shot.power = powerInput.value;
 
-    shot.power = Math.min(Math.max(shot.power, 5), 30);
+    shot.power = Math.min(Math.max(shot.power, shot.minPower), shot.maxPower);
 
   } else {
     shot.power = 5;
@@ -190,38 +200,38 @@ document.getElementById("canvas").addEventListener("mousemove", function(event) 
 
 document.getElementById("zoom_in").addEventListener("click", function(event) {
   console.log("zoom_in");
-  zoom.x *= 1.2;
-  zoom.y *= 1.2;
+  zoom.x *= 1.4;
+  zoom.y *= 1.4;
 });
 
 document.getElementById("zoom_out").addEventListener("click", function(event) {
-  zoom.x *= 0.8;
-  zoom.y *= 0.8;
+  zoom.x *= 0.6;
+  zoom.y *= 0.6;
 });
 
 document.getElementById("pan_up").addEventListener("click", function(event) {
-  pan.y += 150;
+  pan.y += 250;
   lockOnPlayerId = false;
   followLastBullet = false;
   document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("pan_down").addEventListener("click", function(event) {
-  pan.y -= 150;
+  pan.y -= 250;
   lockOnPlayerId = false;
   followLastBullet = false;
   document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("pan_left").addEventListener("click", function(event) {
-  pan.x += 150;
+  pan.x += 250;
   lockOnPlayerId = false;
   followLastBullet = false;
   document.getElementById("follow_bullet").style = ""
 });
 
 document.getElementById("pan_right").addEventListener("click", function(event) {
-  pan.x -= 150;
+  pan.x -= 250;
   lockOnPlayerId = false;
   followLastBullet = false;
   document.getElementById("follow_bullet").style = ""
@@ -294,7 +304,7 @@ setInterval(()=>{
       if (entity.cooldown){
         ctx.beginPath();
         ctx.arc(0,0,50,0,(2*Math.PI) * (entity.cooldown.value / entity.cooldown.max));
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 5;
         ctx.strokeStyle = 'green';
         ctx.stroke();
       }
@@ -305,6 +315,7 @@ setInterval(()=>{
         ctx.fill();
       }
 
+      //UI follows
       ctx.scale(1/zoom.x, 1/zoom.y);
 
       ctx.fillStyle = entity.visual.color;
@@ -316,7 +327,80 @@ setInterval(()=>{
       } else {
         ctx.fillText(entity.details.name, 0, 0 - 10);
       }
+    }  
+    //Player only UI
+    if (shot && currentPlayerUuid && entity.player && entity.uuid == currentPlayerUuid){
+      var aimRadius = 150;
+
+      ctx.beginPath();
+      
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#555';
+      ctx.fillStyle = '#555';
+      ctx.arc(0,0,aimRadius,0,(2*Math.PI));
+      
+
+      // let inputAngle = Number(document.getElementById("angle_input").value);
+      
+      // console.log("inputAngle: ", inputAngle);
+
+      var aimRadiusPoint = {
+        x: aimRadius*Math.cos(-Math.PI * (shot.angle/180)),
+        y: aimRadius*Math.sin(-Math.PI * (shot.angle/180))
+      };
+
+      var aimRadiusPowerPoint = {
+        x: (Math.max(shot.power,shot.minPower)/shot.maxPower)*aimRadius*Math.cos(-Math.PI * (shot.angle/180)),
+        y: (Math.max(shot.power,shot.minPower)/shot.maxPower)*aimRadius*Math.sin(-Math.PI * (shot.angle/180))
+      };
+
+
+
+      ctx.moveTo(0,0);
+      ctx.lineTo(aimRadiusPoint.x,aimRadiusPoint.y);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#f55';
+      ctx.moveTo(0,0);
+      ctx.lineTo(aimRadiusPowerPoint.x,aimRadiusPowerPoint.y);
+      
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.font = "10px Arial";
+      ctx.fillStyle = "white";
+      ctx.fillText(`angle: ${shot.angle}`, aimRadiusPoint.x,aimRadiusPoint.y);
+      ctx.fillText(`power: ${shot.power}`, aimRadiusPowerPoint.x,aimRadiusPowerPoint.y);
+
+      var East = getPointAtRadius(0,aimRadius);
+      ctx.fillText("0", East.x,East.y-5);
+
+      var North = getPointAtRadius(90,aimRadius);
+      ctx.fillText("90", North.x,North.y-5);
+
+      var West = getPointAtRadius(180,aimRadius);
+      ctx.fillText("180", West.x,West.y-5);
+
+      var South = getPointAtRadius(270,aimRadius);
+      ctx.fillText("270", South.x,South.y-5);
+
+        //Big Cross
+      ctx.beginPath();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#555";
+
+      ctx.moveTo(-1000,0);
+      ctx.lineTo(1000,0);
+      
+      ctx.moveTo(0,-1000);
+      ctx.lineTo(0,1000);
+      
+      ctx.stroke();
+      
     }
+  
 
     if (entity.shockwave){
       ctx.strokeStyle = "#fff";
@@ -333,11 +417,16 @@ setInterval(()=>{
       ctx.arc(0, 0, entity.blast.radius, 0, 2 * Math.PI);
       ctx.fill();
     }
+
+   
+   
     
   }
 
-
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+  
+
+  
   
 
   if (aiming.active){
