@@ -191,7 +191,7 @@ const game = {
       if (userFiringBullet.cooldown.value == userFiringBullet.cooldown.max){
         
         io.emit('message', {
-          message: `shot fired by ${userFiringBullet.details.name}!`
+          message: `shot fired by ${userFiringBullet.details.name}! @ power: ${power} angle: ${angle}`
         })
   
         entityCreator.createBullet(world, {
