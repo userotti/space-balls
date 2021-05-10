@@ -31,7 +31,7 @@ const server = http.createServer(function onRequest (req, res) {
 const io = createSocketIo(server);
 
 server.listen(port, host, () => {
-  console.log(`Server is runnsssss22sing on http://${host}:${port}`);
+  console.log(`Server is up @ http://${host}:${port}`);
   
 });
 

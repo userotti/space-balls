@@ -162,20 +162,20 @@ module.exports = {
     })
 
     world.addComponent(explosion, "countdown", {
-      start_cycles: 30,
+      start_cycles: -10,
       cycles: 30
     });
 
     world.addComponent(explosion, "shockwave", {
       radius: 0,
       max_radius: power*5,
-      speed: 5
+      speed: 10
     });
 
     world.addComponent(explosion, "blast", {
       radius: 0,
       max_radius: power,
-      speed: 5,
+      speed: 2,
     });
 
     

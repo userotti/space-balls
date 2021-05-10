@@ -5,7 +5,7 @@ const queryParams = new URLSearchParams(window.location.search);
 const currentPlayerUuid = queryParams.get("userId");
 if (currentPlayerUuid){
   document.getElementById("join_button").style="display: none;";
-  document.getElementById("spectate_button").style="display: flex;";
+  // document.getElementById("spectate_button").style="display: flex;";
   
   const chatInputElement = document.getElementById("chat_input");
   chatInputElement.addEventListener('keydown', (event)=>{
@@ -63,25 +63,28 @@ socket.on('state', function(event) {
 });
 
 socket.on('message', function(event) {
-  const messageBox = document.getElementById("message_box");
-
+  const messageBox = document.getElementById("message-box-log");
   messageTag = document.createElement('span');
-  messageTag.innerText  = `-${event.message}`;
-  messageTag.style = `font-size: 12px;"`;
+  messageTag.innerText  = `${event.message}`;
+  messageBox.append(messageTag);
   
-  messageBox.insertBefore(messageTag, messageBox.childNodes[0]);
+});
+socket.on('action', function(event) {
+  const actionBox = document.getElementById("action-box-log");
+  actionTag = document.createElement('span');
+  actionTag.innerText  = `${event.message}`;
+  actionBox.append(actionTag);
   
 });
 
 socket.on('score_update', function(event) {
-  const scoreBox = document.getElementById("scoreboard");
+  const scoreBox = document.getElementById("scoreboard-log");
   while (scoreBox.firstChild) {
     scoreBox.removeChild(scoreBox.firstChild);
   }
   for (const [index,value] of event.scoreboard_items.entries()){
     scoreTag = document.createElement('span');
     scoreTag.innerText  = `${index+1}. ${value}`;
-    scoreTag.style = `font-size: 12px; color: #999`;
     scoreBox.appendChild(scoreTag);
   }
 })
@@ -319,7 +322,8 @@ setInterval(()=>{
       ctx.scale(1/zoom.x, 1/zoom.y);
 
       ctx.fillStyle = entity.visual.color;
-      ctx.font = "10px Arial";
+      // ctx.font = "10px Arial";
+      ctx.font = "10px 'Passero One'";
       ctx.fillStyle = "white";
 
       if (entity.countdown){
