@@ -1,18 +1,26 @@
 <html>
   <head>
-
+    <title>Space Balls</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      document.write(
+        '<script src="http://' +
+          (location.host || "localhost").split(":")[0] +
+          ':35729/livereload.js?snipver=1"></' +
+          "script>"
+      );
+    </script>
   </head>
-  <body style="padding: 20px;">
-    <h4>Welcome to Space Balls</h4>
-    <form action="createplayer">
-      <label for="username">username:</label>
-      <input type="text" id="username" name="username">
-      <button style="background-color: red; color: white"> join </button>
-    </form>
+  <body>
+    <div class="newplayer-page">
+      <h4>Welcome to Space Balls</h4>
+      <form action="createplayer">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="John" />
+        <button class="button" id="join_button">Join</button>
+      </form>
 
-    <a id="watch_button" href="index.html" style="display: flex; justify-content: center; align-items: center; width: 200px; height: 40px; background: blue; margin-top: 100px; color: white">
-      Spectate only 
-    </a> 
-
+      <a id="watch_button" class="button" href="index.html"> Spectate only </a>
+    </div>
   </body>
 </html>

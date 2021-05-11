@@ -1,126 +1,88 @@
 <html>
   <head>
-    <script type="application/javascript" src="js/socket.io/socket.io.min.js"></script>
-    <style>
-      .button {
-        width: 50px;
-        height: 50px;
-        background-color: #555;
-        margin: 2px; 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #888;  
-        cursor: pointer;
-      }
-
-      .button_spacer {
-        width: 50px;
-        height: 50px;
-        background-color: #333;
-        margin: 2px;
-      }
-
-      #join_button {
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        position: relative; 
-        width: 300px;
-        height: 40px;
-        background: red;
-        margin: 20px;
-        color: white
-      }
-
-      #spectate_button {
-        display: flex; 
-        justify-content: center;
-        align-items: center;
-        width: 300px;
-        height: 40px;
-        background: blue;
-        margin: 20px;
-        color: white;
-      }
-
-    </style>
+    <script
+      type="application/javascript"
+      src="js/socket.io/socket.io.min.js"
+    ></script>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      document.write(
+        '<script src="http://' +
+          (location.host || "localhost").split(":")[0] +
+          ':35729/livereload.js?snipver=1"></' +
+          "script>"
+      );
+    </script>
   </head>
   <body>
-    
-    <div style="display: flex; flex-direction: row; justify-content: center;">
-
-      <div style="display: flex; flex-direction: column; justify-content: space-between; background-color: #333; width: 170px; height: 600px;">
-        <div style="display: flex; flex-direction: column-reverse; justify-content: flex-start; color: #aaa; height: 100%; padding: 10px; overflow-y: auto;" id="message_box">
-
+    <div id="main">
+      <div class="left-pane">
+        <div id="action_box">
+          <div id="action-box-log">
+            <span>Connection established.</span>
+          </div>
         </div>
-        <div id="chat_widget" style="background-color: #444; color: #aaa; padding: 5px;">
-          <label>Chat:</label>
-          <br>
-          <input id="chat_input" style="width: 100%; margin-top: 10px;">
-          <br>
+        <div class="grow"></div>
+        <a class="button" id="join_button" href="newplayer.html">
+          You are spectating! Join the game!
+        </a>
+        <div id="message_box">
+          <div id="chat_widget">
+            <label>Chat:</label>
+            <br />
+            <input id="chat_input" style="width: 100%; margin-top: 10px" />
+            <br />
+          </div>
+          <div id="message-box-log"></div>
         </div>
-        
+       
       </div>
 
-      <div style="width: 600px; height: 600px;">
-        <canvas id="canvas" width="600" height="600" style="background-color: black; ">
-        </canvas>
-        <a id="join_button" href="newplayer.html">
-          You are spectating!
-          Join the game!
-        </a> 
-        <a id="spectate_button" href="index.html">
-          Disconnect and swtich to spectating mode
-        </a> 
+      <div class="canvas-wrap">
+        <canvas id="canvas" height="600" width="600"> </canvas>
       </div>
-      
-      <div style="display: flex; flex-direction: column; justify-content: flex-start; background-color: #333; width: 170px; padding: 20px">
-        <span style="color: #888;">Camera Controls:</span>
-        <div style="display: flex; flex-wrap: wrap;">
 
-          <div class="button" id="zoom_out">
-            -
-          </div>
-          <div class="button" id="pan_up">
-            up
-          </div>
-          <div class="button" id="zoom_in">
-            +
-          </div>
-          <div class="button" id="pan_left">
-            left
-          </div>
-          <div class="button" id="home">
-            home
-          </div>
-          <div class="button" id="pan_right">
-            right
-          </div>
-          <div class="button" id="follow_bullet">
-            follow bullet
-          </div>
-          <div class="button" id="pan_down">
-            down
-          </div>
-          <div class="button_spacer"></div>
+      <div class="right-pane">
+        <div class="aiming">
+          <span>Gun Control</span>
+          <br />
+          <input placeholder="power" id="power_input" />
+          <br />
+          <input placeholder="angle" id="angle_input" />
+          <br />
+          <button id="fire_button" class="button">Fire</button>
+          <div class="button" id="follow_bullet">Follow Bullet</div>
         </div>
 
-        <div id="scoreboard" style="display: flex; flex-direction: column; justify-content: flex-start; padding-top: 20px;">
-        
+        <div class="grow"></div>
+
+        <div id="scoreboard">
+          <span>Scroreboard</span>
+          <div id="scoreboard-log"></div>
+        </div>
+        <div class="grow"></div>
+
+        <div class="controls">
+          <span>Camera Controls</span>
+          <div class="camera-controls">
+            <div class="button camera" id="zoom_out">-</div>
+            <div class="button camera" id="pan_up">up</div>
+            <div class="button camera" id="zoom_in">+</div>
+            <div class="button camera" id="pan_left">left</div>
+            <div class="button camera" id="home">home</div>
+            <div class="button camera" id="pan_right">right</div>
+
+            <div class="button camera" id="pan_down">down</div>
+          </div>
+
+          <a id="spectate_button" class="button" href="index.html">
+            Disconnect
+          </a>
+          <br />
         </div>
       </div>
-     
     </div>
 
-    
-    <span>Min-Max Power: 5-30</span>
-    <br>
-    <input placeholder="power" id="power_input"/>
-    <br>
-    <input placeholder="angle" id="angle_input"/>
-    <br>
-    <button id="fire_button">Fire</button>
     <script type="application/javascript" src="js/game/index.js"></script>
   </body>
-</html> 
+</html>
