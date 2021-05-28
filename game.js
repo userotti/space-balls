@@ -98,7 +98,8 @@ const game = {
       }
     })
 
-    entityCreator.createOrReplacePlayerAtCalculatedPosition(world, "Target Practice");
+    entityCreator.createOrReplacePlayerAtCalculatedPosition(world, "Target Practice 1");
+    entityCreator.createOrReplacePlayerAtCalculatedPosition(world, "Target Practice 2");
 
     
   },
@@ -122,6 +123,9 @@ const game = {
   },
 
   userIdCheck: (userId) => {
+    // console.log('world',world)
+    // console.log("-----")
+    // console.log(world.findById(userId))
     return !!world.findById(userId);
   },
 
@@ -140,12 +144,25 @@ const game = {
   },
 
   addUser: (username) => {
+    console.log('addUser')
     const playerEntity = entityCreator.createOrReplacePlayerAtCalculatedPosition(
       world,
       username
     );
     io.emit("message", {
       message: `${playerEntity.details.name} joined the solar system.`,
+    });
+    return playerEntity;
+  },
+
+  activateUser: (username) => {
+    console.log('activateUser')
+    const playerEntity = entityCreator.createOrReplacePlayerAtCalculatedPosition(
+      world,
+      username
+    );
+    io.emit("message", {
+      message: `${playerEntity.details.name} reconnected.`,
     });
     return playerEntity;
   },
@@ -171,6 +188,21 @@ const game = {
         player.socketConnection.id == connectionId
       ) {
         world.removeEntity(player);
+        io.emit("message", {
+          message: `${player.details.name} has quit.`,
+        });
+      }
+    }
+  },
+
+  disableUserWithConnectionId: (connectionId) => {
+    for (player of world.find(["player"])) {
+      if (
+        player.socketConnection &&
+        connectionId &&
+        player.socketConnection.id == connectionId
+      ) {
+        // world.removeEntity(player);
         io.emit("message", {
           message: `${player.details.name} disconnected.`,
         });

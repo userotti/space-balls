@@ -4,6 +4,16 @@
       type="application/javascript"
       src="js/socket.io/socket.io.min.js"
     ></script>
+    <script
+      src="https://unpkg.com/react@17/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
     <link rel="stylesheet" href="styles.css" />
     <script>
       // document.write(
@@ -15,7 +25,8 @@
     </script>
   </head>
   <body>
-    <div id="main">
+    <!-- <div id="main">
+      
       <div class="left-pane">
         <div id="action_box">
           <div id="action-box-log">
@@ -46,12 +57,13 @@
         <div class="aiming">
           <span>Gun Control</span>
           <br />
-          <input placeholder="power" id="power_input" />
+          <input placeholder="power" id="power_input" type="range" max="30" />
           <br />
-          <input placeholder="angle" id="angle_input" />
+          <input placeholder="angle" id="angle_input" type="range" max="360" />
           <br />
           <button id="fire_button" class="button">Fire</button>
           <div class="button" id="follow_bullet">Follow Bullet</div>
+          <div class="button" id="scuttle">Scuttle</div>
         </div>
 
         <div class="grow"></div>
@@ -61,7 +73,7 @@
           <div id="scoreboard-log"></div>
         </div>
         <div class="grow"></div>
-
+        
         <div class="controls">
           <span>Camera Controls</span>
           <div class="camera-controls">
@@ -75,14 +87,23 @@
             <div class="button camera" id="pan_down">down</div>
           </div>
 
+          <div id="like_button_container"></div>
+
           <a id="spectate_button" class="button" href="index.html">
             Disconnect
           </a>
           <br />
         </div>
       </div>
-    </div>
+    </div> -->
 
-    <script type="application/javascript" src="js/game/index.js"></script>
+    <div id="gameContainer"></div>
+    <script type="text/babel" src="js/AngleControl.jsx"></script>
+    <script type="text/babel" src="js/PowerControl.jsx"></script>
+    <script type="text/babel" src="js/FollowButton.jsx"></script>
+    <script type="text/babel" src="js/FireButton.jsx"></script>
+    <script type="text/babel" src="js/CameraControls.jsx"></script>
+    <script type="text/babel" src="js/CanvasComponent.jsx"></script>
+    <script type="text/babel" src="js/GameContainer.js"></script>
   </body>
 </html>

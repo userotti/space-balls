@@ -1,13 +1,7 @@
+"use strict";
+
 const canvasWidth = 600;
 const canvasHeight = 600;
-
-var zoom = {
-  x: 1,
-  y: 1,
-};
-
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
 
 var socket = io();
 
@@ -21,67 +15,19 @@ var pan = {
 };
 
 var entities = [];
+
 var messages = [];
 
 var lockOnPlayerId = true;
+
 var followLastBullet = false;
 
-const queryParams = new URLSearchParams(window.location.search);
-const currentPlayerUuid = queryParams.get("userId");
-if (currentPlayerUuid) {
-  document.getElementById("join_button").style = "display: none;";
-  // document.getElementById("spectate_button").style="display: flex;";
+let ctx = null;
 
-  const chatInputElement = document.getElementById("chat_input");
-  chatInputElement.addEventListener("keydown", (event) => {
-    if (currentPlayerUuid && event.key == "Enter") {
-      socket.emit("chat", {
-        message: chatInputElement.value,
-      });
-      chatInputElement.value = "";
-    }
-  });
-} else {
-  document.getElementById("join_button").style = "";
-  document.getElementById("spectate_button").style = "display: none;";
-  document.getElementById("chat_widget").style = "display: none;";
-}
-
-function getPointAtRadius(angleDegrees, radius) {
-  return {
-    x: radius * Math.cos(-Math.PI * (angleDegrees / 180)),
-    y: radius * Math.sin(-Math.PI * (angleDegrees / 180)),
-  };
-}
-
-socket.on("state", function (event) {
-  entities = event.entities;
-});
-
-socket.on("message", function (event) {
-  const messageBox = document.getElementById("message-box-log");
-  messageTag = document.createElement("span");
-  messageTag.innerText = `${event.message}`;
-  messageBox.append(messageTag);
-});
-socket.on("action", function (event) {
-  const actionBox = document.getElementById("action-box-log");
-  actionTag = document.createElement("span");
-  actionTag.innerText = `${event.message}`;
-  actionBox.append(actionTag);
-});
-
-socket.on("score_update", function (event) {
-  const scoreBox = document.getElementById("scoreboard-log");
-  while (scoreBox.firstChild) {
-    scoreBox.removeChild(scoreBox.firstChild);
-  }
-  for (const [index, value] of event.scoreboard_items.entries()) {
-    scoreTag = document.createElement("span");
-    scoreTag.innerText = `${index + 1}. ${value}`;
-    scoreBox.appendChild(scoreTag);
-  }
-});
+let zoom = {
+  x: 1,
+  y: 1,
+};
 
 const aiming = {
   mousemove: {
@@ -109,156 +55,61 @@ const shot = {
     y: 0,
   },
 };
-//Setup interaction
-document
-  .getElementById("canvas")
-  .addEventListener("mousedown", function (event) {
-    aiming.mousedown.x = event.offsetX;
-    aiming.mousedown.y = event.offsetY;
-    aiming.active = true;
-  });
 
-document.getElementById("canvas").addEventListener("mouseup", function (event) {
-  aiming.mouseup.x = event.offsetX;
-  aiming.mouseup.y = event.offsetY;
+const queryParams = new URLSearchParams(window.location.search);
+const currentPlayerUuid = queryParams.get("userId");
+if (currentPlayerUuid) {
+  // document.getElementById("join_button").style = "display: none;";
+  // const chatInputElement = document.getElementById("chat_input");
+  // chatInputElement.addEventListener("keydown", (event) => {
+  //   if (currentPlayerUuid && event.key == "Enter") {
+  //     socket.emit("chat", {
+  //       message: chatInputElement.value,
+  //     });
+  //     chatInputElement.value = "";
+  //   }
+  // });
+} else {
+  // document.getElementById("join_button").style = "";
+  // document.getElementById("spectate_button").style = "display: none;";
+  // document.getElementById("chat_widget").style = "display: none;";
+}
 
-  aiming.active = false;
+function getPointAtRadius(angleDegrees, radius) {
+  return {
+    x: radius * Math.cos(-Math.PI * (angleDegrees / 180)),
+    y: radius * Math.sin(-Math.PI * (angleDegrees / 180)),
+  };
+}
 
-  shot.power =
-    Math.sqrt(
-      Math.pow(aiming.mousedown.y - aiming.mouseup.y, 2) +
-        Math.pow(aiming.mousedown.x - aiming.mouseup.x, 2)
-    ) * 0.05;
-
-  shot.angle = Math.atan2(
-    aiming.mousedown.y - aiming.mouseup.y,
-    -1 * (aiming.mousedown.x - aiming.mouseup.x)
-  );
-  shot.angle = ((shot.angle + Math.PI) * 180) / Math.PI;
-
-  let powerInput = document.getElementById("power_input");
-  let angleInput = document.getElementById("angle_input");
-
-  powerInput.value = shot.power;
-  angleInput.value = shot.angle;
+socket.on("state", function (event) {
+  entities = event.entities;
 });
 
-document
-  .getElementById("power_input")
-  .addEventListener("input", function (event) {
-    let powerInput = document.getElementById("power_input");
-    if (!!Number(powerInput.value) || Number(powerInput.value) == 0) {
-      shot.power = powerInput.value;
-      shot.power = Math.min(Math.max(shot.power, shot.minPower), shot.maxPower);
-    }
-  });
-
-document
-  .getElementById("angle_input")
-  .addEventListener("input", function (event) {
-    let angleInput = document.getElementById("angle_input");
-    if (!!Number(angleInput.value) || Number(angleInput.value) == 0) {
-      shot.angle = angleInput.value;
-    }
-  });
-
-document
-  .getElementById("fire_button")
-  .addEventListener("click", function (event) {
-    let powerInput = document.getElementById("power_input");
-
-    if (!!Number(powerInput.value)) {
-      shot.power = powerInput.value;
-
-      shot.power = Math.min(Math.max(shot.power, shot.minPower), shot.maxPower);
-    } else {
-      shot.power = 5;
-    }
-
-    powerInput.value = shot.power;
-
-    let angleInput = document.getElementById("angle_input");
-
-    if (!!Number(angleInput.value)) {
-      shot.angle = angleInput.value;
-    } else {
-      shot.angle = 0;
-    }
-
-    angleInput.value = shot.angle;
-
-    console.log("fire: ", {
-      angle: shot.angle,
-      power: shot.power,
-    });
-
-    socket.emit("fire", {
-      angle: shot.angle,
-      power: shot.power,
-    });
-  });
-
-document
-  .getElementById("canvas")
-  .addEventListener("mousemove", function (event) {
-    aiming.mousemove.x = event.offsetX;
-    aiming.mousemove.y = event.offsetY;
-  });
-
-document.getElementById("zoom_in").addEventListener("click", function (event) {
-  console.log("zoom_in");
-  zoom.x *= 1.4;
-  zoom.y *= 1.4;
+socket.on("message", function (event) {
+  const messageBox = document.getElementById("message-box-log");
+  let messageTag = document.createElement("span");
+  messageTag.innerText = `${event.message}`;
+  messageBox.append(messageTag);
+});
+socket.on("action", function (event) {
+  const actionBox = document.getElementById("action-box-log");
+  let actionTag = document.createElement("span");
+  actionTag.innerText = `${event.message}`;
+  actionBox.append(actionTag);
 });
 
-// document.getElementById("zoom_out").addEventListener("click", function (event) {
-//   zoom.x *= 0.6;
-//   zoom.y *= 0.6;
-// });
-
-document.getElementById("pan_up").addEventListener("click", function (event) {
-  pan.y += 250;
-  lockOnPlayerId = false;
-  followLastBullet = false;
-  document.getElementById("follow_bullet").style = "";
+socket.on("score_update", function (event) {
+  const scoreBox = document.getElementById("scoreboard-log");
+  while (scoreBox.firstChild) {
+    scoreBox.removeChild(scoreBox.firstChild);
+  }
+  for (const [index, value] of event.scoreboard_items.entries()) {
+    let scoreTag = document.createElement("span");
+    scoreTag.innerText = `${index + 1}. ${value}`;
+    scoreBox.appendChild(scoreTag);
+  }
 });
-
-document.getElementById("pan_down").addEventListener("click", function (event) {
-  pan.y -= 250;
-  lockOnPlayerId = false;
-  followLastBullet = false;
-  document.getElementById("follow_bullet").style = "";
-});
-
-document.getElementById("pan_left").addEventListener("click", function (event) {
-  pan.x += 250;
-  lockOnPlayerId = false;
-  followLastBullet = false;
-  document.getElementById("follow_bullet").style = "";
-});
-
-document
-  .getElementById("pan_right")
-  .addEventListener("click", function (event) {
-    pan.x -= 250;
-    lockOnPlayerId = false;
-    followLastBullet = false;
-    document.getElementById("follow_bullet").style = "";
-  });
-
-document.getElementById("home").addEventListener("click", function (event) {
-  lockOnPlayerId = true;
-  followLastBullet = false;
-  document.getElementById("follow_bullet").style = "";
-});
-
-document
-  .getElementById("follow_bullet")
-  .addEventListener("click", function (event) {
-    followLastBullet = true;
-    lockOnPlayerId = false;
-    document.getElementById("follow_bullet").style = "background-color: red;";
-  });
 
 setInterval(() => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -298,7 +149,7 @@ setInterval(() => {
     }
   }
 
-  for (entity of entities) {
+  for (let entity of entities) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.translate(canvasWidth / 2, canvasHeight / 2);
     ctx.scale(zoom.x, zoom.y);
@@ -468,3 +319,76 @@ setInterval(() => {
     ctx.stroke();
   }
 }, 50);
+
+class GameContainer extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div id="main">
+        <div class="left-pane">
+          <div id="action_box">
+            <div id="action-box-log">
+              <span>Connection established.</span>
+            </div>
+          </div>
+          <div class="grow"></div>
+          <a class="button" id="join_button" href="newplayer.html">
+            You are spectating! Join the game!
+          </a>
+          <div id="message_box">
+            <div id="chat_widget">
+              <label>Chat:</label>
+              <br />
+              <input id="chat_input" />
+              <br />
+            </div>
+            <div id="message-box-log"></div>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <CanvasComponent />
+        </div>
+
+        <div class="right-pane">
+          <div class="aiming">
+            <span>Gun Control</span>
+            <br />
+            <PowerControl />
+            <br />
+            <AngleControl />
+            <br />
+            <FireButton />
+            <FollowButton />
+            <div class="button" id="scuttle">
+              Scuttle
+            </div>
+          </div>
+
+          <div class="grow"></div>
+
+          <div id="scoreboard">
+            <span>Scroreboard</span>
+            <div id="scoreboard-log"></div>
+          </div>
+          <div class="grow"></div>
+
+          <div class="controls">
+            <span>Camera Controls</span>
+            <CameraControls />
+            <a id="spectate_button" class="button" href="index.html">
+              Disconnect
+            </a>
+            <br />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+const domContainer = document.querySelector("#gameContainer");
+ReactDOM.render(<GameContainer />, domContainer);

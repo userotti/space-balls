@@ -50,6 +50,7 @@ io.on('connection', (socket) => {
   if (queryObject['userId'] && game.userIdCheck(queryObject['userId'])){
     for (let connectionId of socket.rooms.keys()) {
       game.linkUserIdWithConnectionId(queryObject['userId'], connectionId)
+      game.activateUser(queryObject['username'])
       game.sendScoreUpdate();
     }
   }
@@ -57,7 +58,8 @@ io.on('connection', (socket) => {
   socket.on('disconnecting', () => {
     for (let connectionId of socket.rooms.keys()) {
       if (!!game.getPlayerByConnectionId(connectionId)){
-        game.removeUserWithConnectionId(connectionId)  
+        // game.removeUserWithConnectionId(connectionId)
+        game.disableUserWithConnectionId(connectionId)
         game.sendScoreUpdate();
       }
     }

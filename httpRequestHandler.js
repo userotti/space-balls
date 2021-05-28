@@ -6,9 +6,9 @@ const querystring = require('querystring');
 //Main request handler
 module.exports = function (req, res) {
   
-  console.log("req.url", req.url);
-  console.log("req.url.split('?')[0]", req.url.split('?')[0]);
-  console.log("req.method",req.method);
+  // console.log("req.url", req.url);
+  // console.log("req.url.split('?')[0]", req.url.split('?')[0]);
+  // console.log("req.method",req.method);
   
   
   switch (req.url.split('?')[0]) {
@@ -24,9 +24,20 @@ module.exports = function (req, res) {
         );
         res.end();
       }
+      break;
+    }
+
+    case "/debug.html": {
+      // if (queryObject['userId'] && !game.userIdCheck(queryObject['userId'])){
+        console.log('game',JSON.stringify(game))
+        res.write(JSON.stringify(game));
+        res.end();
+      // }
+      break;
     }
       
     case "/createplayer": {
+      console.log('/createplayer')
       const queryObject = querystring.parse(req.url.split('?')[1]);
       if (queryObject['username'] && queryObject['username'].length){
         
@@ -38,12 +49,9 @@ module.exports = function (req, res) {
         res.end();
         
       }
+      break;
     }
 
-      
-      
-      
-    break;
   }  
 
 
